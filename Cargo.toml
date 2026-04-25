@@ -1,0 +1,33 @@
+[package]
+name = "egui_sauge"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.92"
+authors = ["egui_sauge contributors"]
+description = "A fresh, natural design system for egui — sage palette, warm neutrals, WCAG AA."
+repository = "https://github.com/egui_sauge/egui_sauge"
+homepage = "https://github.com/egui_sauge/egui_sauge"
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ["egui", "design-system", "theme", "ui", "accessibility"]
+categories = ["gui", "visualization"]
+exclude = ["/assets/fonts/*.md", "/.github"]
+
+[dependencies]
+egui = "0.34"
+egui-phosphor = "0.12"
+
+[dev-dependencies]
+eframe = "0.34"
+
+[features]
+# Default is empty: the crate works without shipping TTFs. Enable
+# `embedded-fonts` once Inter + JetBrains Mono are dropped into
+# `assets/fonts/`; the spec defaults this on but we keep the repo
+# buildable as-is.
+default = []
+embedded-fonts = []
+
+[lints.rust]
+missing_docs = "warn"
+unsafe_code = "forbid"

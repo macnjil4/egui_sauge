@@ -1,0 +1,77 @@
+# Changelog
+
+## [Unreleased]
+
+## [1.0.0] — 2026-04-25
+
+First stable release. Public API frozen for the 1.x line. Breaking changes
+require 2.0.
+
+### Added
+- Initial implementation: `Palette`, `apply_theme`, `install_fonts`.
+- Light and dark palettes, WCAG AA validated by `tests/contrast.rs`.
+- `SPACING` and `RADIUS` token tables.
+- `Elevation` enum (Flat / Card / Popover / Modal) with per-mode `Shadow`;
+  `apply_theme` wires `window_shadow` = Modal and `popup_shadow` = Popover.
+- `Icon` enum backed by [Phosphor Icons](https://phosphoricons.com/) via the
+  `egui-phosphor` crate. ~80 named variants curated for IT apps (status,
+  navigation, infrastructure: server/database/cpu/cloud/network/lightning/
+  package/rocket, files & code, git, security, comms, people, time, misc).
+  Two escape hatches: `Icon::Glyph(&'static str)` for any other Phosphor
+  codepoint, and `Icon::Custom(fn)` for hand-rolled painters.
+- `install_fonts` now also registers the Phosphor regular font on `ctx`.
+- `Density` preset (Comfortable / Compact) + `apply_theme_with(ctx, palette, density)`.
+- `Locale` (En default, Fr) + `set_locale(ctx, locale)` / `locale_of(ctx)`. Translates the strings the DS itself owns (`StatusDot` default labels, `ConfirmDialog` default buttons). No runtime i18n dependency — application-level strings are out of scope; bring your own crate (fluent / rust-i18n / …) for those.
+- Ambient theme state on `Context`: `palette_of(ctx)` / `density_of(ctx)` / `locale_of(ctx)`.
+- `Palette.dark_mode` flag so callers and shadow helpers can branch cleanly.
+- **Component library** under `egui_sauge::components`:
+  - Atoms: `Button` (4 variants × 3 sizes, leading/trailing icons, full-width,
+    disabled, focus ring), `IconButton` (with tooltip), `Switch`, `Badge`
+    (6 tones × solid/soft), `Tag` (closable), `StatusDot` (online/degraded/
+    offline/idle + pulse), `Kbd`, `Spinner`, `ProgressBar`.
+  - Containers: `Card` (title/subtitle/elevation), `Section`, `EmptyState`,
+    `Stat` (with `Trend::Up/Down/Flat` delta), `CodeBlock` (header + scroll).
+  - Feedback: `Alert` (inline, dismissible), `Toasts` / `Toast` (top-right
+    stack with auto-dismiss).
+  - Forms: `InputField` (label / placeholder / helper / error / password /
+    leading+trailing icons / focus ring), `SelectField` (themed ComboBox
+    wrapper with label/helper/error).
+  - Overlays: `Dialog` (modal with scrim, close icon, title/body/actions,
+    `DialogControl::close()` for action-button-driven closure),
+    `ConfirmDialog` (turn-key confirm/cancel wrapper, danger variant).
+  - Navigation: `NavItem` (sidebar row with icon/badge/selected accent),
+    `Tabs<T>` (typed tab bar with underline + optional icons),
+    `Breadcrumb` (clickable path, last segment static),
+    `PageHeader` (title + subtitle + breadcrumb + right-aligned actions).
+  - Data: `KeyValue` (definition list), `LogLine` (timestamp + colored level
+    + monospace message), `Skeleton` (animated loading placeholder: line,
+    block, circle).
+  - Menu: `MenuItem` for use inside `egui::menu::menu_button` (or
+    `egui::Popup::menu(&trigger)` with a themed `Button`) — icon / label /
+    shortcut hint / danger / disabled.
+  - `SubMenu` — nested submenu trigger that wraps egui 0.34's
+    `containers::menu::SubMenu`. Renders like a `MenuItem` with a trailing
+    chevron, opens a flyout on hover. Submenus nest arbitrarily deep.
+  - Tooltip: `tooltip(resp, text)` and `TooltipExt::sauge_tooltip(text)`
+    extension trait — themed hover tooltip with Popover shadow.
+- `GUIDE.md` — UX/UI playbook covering page composition, navigation
+  patterns (sidebar/tabs/breadcrumb/topnav/drawer/modal), the modal-vs-side
+  panel decision, button order convention (primary right-most), typography
+  hierarchy, feedback (alert/toast/banner), forms, tables, empty states,
+  accessibility, and IT-app patterns (health dashboard, resource list,
+  pipeline, destructive confirmation).
+- Examples `minimal` and `showcase`; showcase exercises every component,
+  both density presets, both color modes, icon extensibility (`★` via
+  `Icon::Custom`), toast levels, and a destructive-action dialog.
+
+### Notes
+- Three light-mode palette values were darkened from the spec in §4 so every
+  text/background pair clears the AA 4.5:1 bar. Dark-mode values are unchanged.
+  - `brand_default`: `#4A8B6B` → `#3F7A5D` (white-on-brand was 4.04:1).
+  - `brand_hover`, `brand_pressed`, `focus_ring` shifted in step to preserve
+    the tonal progression.
+  - `success`: `#3F8A5C` → `#2E7048` (was 4.02:1 on `bg_app`).
+  - `warning`: `#B8822A` → `#8A6317` (was 3.21:1 on `bg_app`).
+- `embedded-fonts` is not a default feature in the initial commit — the TTFs
+  live outside the repo. Spec default can be restored once fonts are added.
+- Target toolchain: egui 0.34, eframe 0.34, Rust edition 2024, MSRV 1.92.
