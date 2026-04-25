@@ -20,14 +20,6 @@ egui-phosphor = "0.12"
 [dev-dependencies]
 eframe = "0.34"
 
-[features]
-# Default is empty: the crate works without shipping TTFs. Enable
-# `embedded-fonts` once Inter + JetBrains Mono are dropped into
-# `assets/fonts/`; the spec defaults this on but we keep the repo
-# buildable as-is.
-default = []
-embedded-fonts = []
-
 [lints.rust]
 missing_docs = "warn"
 unsafe_code = "forbid"

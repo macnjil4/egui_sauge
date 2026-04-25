@@ -7,6 +7,13 @@
 First stable release. Public API frozen for the 1.x line. Breaking changes
 require 2.0.
 
+### Removed (vs. pre-release drafts)
+- The `embedded-fonts` Cargo feature. It referenced TTFs we never shipped
+  (Inter / JetBrains Mono are not in the repo for size reasons), so the
+  feature was broken under `--all-features` (also broke `docs.rs`). The
+  README now shows the 5-line pattern to embed any UI typeface at the
+  application level.
+
 ### Added
 - Initial implementation: `Palette`, `apply_theme`, `install_fonts`.
 - Light and dark palettes, WCAG AA validated by `tests/contrast.rs`.

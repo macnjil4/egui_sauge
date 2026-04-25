@@ -6,10 +6,30 @@ use egui::{FontFamily, FontId, TextStyle};
 /// (display / heading / h2 / h3 / body-lg / body / button / small / monospace),
 /// and register the Phosphor icon font so [`crate::Icon`] glyphs render.
 ///
-/// When built with the `embedded-fonts` feature, also registers Inter and
-/// `JetBrains Mono` from `assets/fonts/`. Without that feature, the host's
-/// existing font stack is used (egui's default fonts, or whatever the
-/// application installed previously).
+/// UI text uses egui's bundled fonts. To embed a custom UI typeface (e.g.
+/// Inter, JetBrains Mono), register it on the `Context` *before* calling
+/// `install_fonts`, or build your own [`egui::FontDefinitions`]:
+///
+/// ```ignore
+/// use std::sync::Arc;
+/// use egui::{FontData, FontDefinitions, FontFamily};
+///
+/// let mut fonts = FontDefinitions::default();
+/// fonts.font_data.insert(
+///     "Inter".into(),
+///     Arc::new(FontData::from_static(include_bytes!("../path/to/Inter-Regular.ttf"))),
+/// );
+/// fonts
+///     .families
+///     .entry(FontFamily::Proportional)
+///     .or_default()
+///     .insert(0, "Inter".into());
+///
+/// // Then let egui_sauge layer Phosphor + the type scale on top:
+/// egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Regular);
+/// ctx.set_fonts(fonts);
+/// egui_sauge::install_fonts(ctx); // sets the text-style scale
+/// ```
 pub fn install_fonts(ctx: &egui::Context) {
     install_egui_fonts(ctx);
     install_text_styles(ctx);
@@ -17,50 +37,8 @@ pub fn install_fonts(ctx: &egui::Context) {
 
 fn install_egui_fonts(ctx: &egui::Context) {
     let mut fonts = egui::FontDefinitions::default();
-
-    #[cfg(feature = "embedded-fonts")]
-    add_embedded_ui_fonts(&mut fonts);
-
     egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Regular);
-
     ctx.set_fonts(fonts);
-}
-
-#[cfg(feature = "embedded-fonts")]
-fn add_embedded_ui_fonts(fonts: &mut egui::FontDefinitions) {
-    use egui::FontData;
-    use std::sync::Arc;
-
-    fonts.font_data.insert(
-        "Inter-Regular".into(),
-        Arc::new(FontData::from_static(include_bytes!(
-            "../assets/fonts/Inter-Regular.ttf"
-        ))),
-    );
-    fonts.font_data.insert(
-        "Inter-Medium".into(),
-        Arc::new(FontData::from_static(include_bytes!(
-            "../assets/fonts/Inter-Medium.ttf"
-        ))),
-    );
-    fonts.font_data.insert(
-        "Inter-SemiBold".into(),
-        Arc::new(FontData::from_static(include_bytes!(
-            "../assets/fonts/Inter-SemiBold.ttf"
-        ))),
-    );
-    fonts.font_data.insert(
-        "JetBrainsMono".into(),
-        Arc::new(FontData::from_static(include_bytes!(
-            "../assets/fonts/JetBrainsMono-Regular.ttf"
-        ))),
-    );
-
-    let prop = fonts.families.entry(FontFamily::Proportional).or_default();
-    prop.insert(0, "Inter-Regular".into());
-
-    let mono = fonts.families.entry(FontFamily::Monospace).or_default();
-    mono.insert(0, "JetBrainsMono".into());
 }
 
 fn install_text_styles(ctx: &egui::Context) {

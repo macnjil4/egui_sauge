@@ -80,16 +80,31 @@ eframe = "0.34"
 
 ## Fonts
 
-By default, `install_fonts` installs the typographic scale and registers the Phosphor icon font. UI text uses egui's bundled fonts.
+`install_fonts` installs the typographic scale and registers the Phosphor icon font. UI text uses egui's bundled fonts.
 
-To also embed Inter + JetBrains Mono in your binary, drop these TTFs into `assets/fonts/`:
+If you want a custom UI typeface (Inter, JetBrains Mono, your brand font…), embed it at the application level *before* calling `install_fonts`:
 
-- `Inter-Regular.ttf`
-- `Inter-Medium.ttf`
-- `Inter-SemiBold.ttf`
-- `JetBrainsMono-Regular.ttf`
+```rust
+use std::sync::Arc;
+use egui::{FontData, FontDefinitions, FontFamily};
 
-…and enable the feature: `egui_sauge = { ..., features = ["embedded-fonts"] }`. Both families are SIL OFL 1.1 and redistributable.
+let mut fonts = FontDefinitions::default();
+fonts.font_data.insert(
+    "Inter".into(),
+    Arc::new(FontData::from_static(include_bytes!("../assets/Inter-Regular.ttf"))),
+);
+fonts
+    .families
+    .entry(FontFamily::Proportional)
+    .or_default()
+    .insert(0, "Inter".into());
+
+egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Regular);
+ctx.set_fonts(fonts);
+egui_sauge::install_fonts(ctx); // sets the type scale
+```
+
+Inter and JetBrains Mono are both SIL OFL 1.1 and redistributable — drop the TTFs in your own assets directory.
 
 ## i18n
 
