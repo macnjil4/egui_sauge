@@ -175,15 +175,36 @@ match ConfirmDialog::new("Supprimer ce projet ?",
 
 ## 8. Tables et listes
 
-Pas encore de composant `Table` natif (todo v0.2). Pour l'instant, composer avec `egui::Grid` ou `egui::ScrollArea` + lignes en `Card::new().elevation(Elevation::Flat)`.
+Depuis **1.2.0**, `Table<T>` couvre la plupart des cas (tri par colonne, sélection multi-rangées, zebra, hauteur de ligne automatique selon `Density`).
 
-**Règles si vous le construisez vous-même** :
-- Header sticky, fond `bg_surface_alt`.
-- Cellules numériques alignées à droite, mono.
-- IDs (UUID, hash, IP) toujours mono + tronqués avec ellipsis ; valeur complète au hover (`tooltip`).
-- Lignes zebra optionnelles (utiliser `bg_surface_alt` 1 ligne sur 2).
-- Sélection par checkbox ; éviter le clic-pour-sélectionner qui empêche la copie.
-- Densité : `Density::Compact` dès >20 lignes.
+```rust
+use egui_sauge::components::{Table, Column, SortState, Pagination};
+
+Table::new(rows)
+    .selectable(&mut selection)             // HashSet<usize>
+    .sort(&mut sort_state)                  // Option<SortState>
+    .column("Name", |ui, r| { ui.label(&r.name); })
+        .last(Column::sortable)
+    .column_text("Region", |r| r.region.to_string())
+        .last(Column::sortable)
+    .column_text("CPU", |r| format!("{:.0}%", r.cpu))
+        .last(|c| c.sortable().align_right())  // numérique → align_right
+    .show(ui);
+
+Pagination::new(&mut page, total, &mut page_size)
+    .page_sizes([10, 25, 100])
+    .show(ui);
+```
+
+**Règles** :
+- Cellules numériques → `Column::align_right` + `format!("{:.N}…")`.
+- IDs (UUID, hash, IP) → mono via `RichText::monospace()`.
+- Lignes zebra activées par défaut ; `Table::no_zebra()` pour les listes courtes.
+- Sélection : `Table::selectable(&mut HashSet<usize>)` ajoute une colonne checkbox à gauche.
+- Tri : `Column::sortable()` + `&mut Option<SortState>`. **Le composant ne re-trie pas la donnée** — il signale, vous re-triez côté caller. C'est intentionnel : votre source de vérité reste votre type.
+- Densité : passez en `Density::Compact` dès >20 lignes pour gagner ~25% de hauteur.
+
+**Pas encore** : header sticky lors du scroll, virtualisation pour 10k+ lignes, pinned columns. Ouvrez une issue si vous en avez besoin.
 
 ---
 

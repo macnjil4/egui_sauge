@@ -156,7 +156,7 @@ impl<'a, 'b> Widget for Tag<'a, 'b> {
 // -- StatusDot --------------------------------------------------------------
 
 /// Operational state signalled by a colored dot + label.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum StatusLevel {
     /// Healthy / up / active.
     Online,

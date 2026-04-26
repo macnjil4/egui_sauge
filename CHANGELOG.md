@@ -2,6 +2,52 @@
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-04-26
+
+IT-app components release. No breaking changes.
+
+### Added
+
+#### Forms
+- `Checkbox` — themed two/three-state input with `indeterminate`,
+  `error`, `disabled`, optional label.
+- `RadioGroup<T>` — typed picker, vertical/horizontal layout, per-option
+  helper text, group-level error, `RadioOption::disabled`.
+- `NumberField` — numeric input with `+`/`−` stepper, `min`/`max`
+  clamping, `step`, `decimals`, `suffix` (units like `%`, `MB`), helper
+  / error states.
+
+#### Data
+- `Avatar` — circular badge from initials (deterministic brand-tinted
+  background), an `Icon`, or an `egui::TextureId`. Sizes Xs-Xl, status
+  dot, themed tooltip.
+- `AvatarGroup` — overlapping stack with `+N` overflow chip.
+- `Table<T>` — typed columns with custom cell renderers, sortable
+  headers (caller re-orders the data — the component just signals via
+  `&mut Option<SortState>`), multi-row selection (`&mut HashSet<usize>`),
+  zebra stripes, density-aware row height, per-column alignment and
+  fixed widths.
+- `Pagination` — page navigation paired with `Table`. Page-size
+  selector, prev/next, "Showing N–M of T" status, customisable size
+  choices.
+
+#### Layout
+- `Drawer` — non-blocking right-side panel; companion to `Dialog`.
+  Underlying surface stays interactive. Returns `true` when the user
+  clicks the close ×.
+- `Accordion` — themed wrapper around `egui::CollapsingHeader` with an
+  optional icon, subtitle, and default-open flag.
+
+### Changed
+- `StatusLevel` now derives `PartialOrd` / `Ord` so it sorts
+  predictably in tables.
+- `Icon` exposes a private `pub(crate) glyph()` returning
+  `Option<&'static str>` (used by `Accordion` to embed icons in a
+  `LayoutJob`).
+- `GUIDE.md` § Tables rewritten now that `Table<T>` exists.
+- `examples/showcase.rs` gets a "v1.2 — Forms, Data, Layout" section
+  demonstrating every new component.
+
 ## [1.1.0] — 2026-04-26
 
 Polish & infrastructure release. No breaking changes.

@@ -246,9 +246,10 @@ impl Icon {
         }
     }
 
-    /// Resolve this icon to its Phosphor codepoint. Panics if called on
-    /// [`Icon::Custom`] (which has no codepoint).
-    fn codepoint(self) -> &'static str {
+    /// Resolve this icon to its Phosphor codepoint. Returns `"?"` for
+    /// [`Icon::Custom`] (which has no glyph). Use [`Self::glyph`] when
+    /// you need to differentiate.
+    pub(crate) fn codepoint(self) -> &'static str {
         match self {
             // Status
             Self::Check => ph::CHECK,
@@ -361,6 +362,14 @@ impl Icon {
             // Escapes
             Self::Glyph(s) => s,
             Self::Custom(_) => "?",
+        }
+    }
+
+    /// Like [`Self::codepoint`] but returns `None` for [`Icon::Custom`].
+    pub(crate) fn glyph(self) -> Option<&'static str> {
+        match self {
+            Self::Custom(_) => None,
+            other => Some(other.codepoint()),
         }
     }
 }

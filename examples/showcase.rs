@@ -4,10 +4,12 @@
 use eframe::egui;
 use egui::{Color32, RichText, Sense, Stroke, TextStyle, Vec2, vec2};
 use egui_sauge::components::{
-    Alert, Badge, BadgeTone, Breadcrumb, Button, ButtonSize, Card, CodeBlock, ConfirmDialog,
-    Dialog, EmptyState, InputField, Kbd, KeyValue, Level, LogLevel, LogLine, MenuItem, NavItem,
-    PageHeader, ProgressBar, Section, SelectField, Skeleton, Spinner, Stat, StatusDot, StatusLevel,
-    SubMenu, Switch, Tabs, Tag, Toasts, TooltipExt, Trend,
+    Accordion, Alert, Avatar, AvatarGroup, AvatarSize, Badge, BadgeTone, Breadcrumb, Button,
+    ButtonSize, Card, Checkbox, CodeBlock, Column, ConfirmDialog, Dialog, Drawer, EmptyState,
+    InputField, Kbd, KeyValue, Level, LogLevel, LogLine, MenuItem, NavItem, NumberField,
+    PageHeader, Pagination, ProgressBar, RadioGroup, RadioOption, Section, SelectField, Skeleton,
+    SortState, Spinner, Stat, StatusDot, StatusLevel, SubMenu, Switch, Table, Tabs, Tag, Toasts,
+    TooltipExt, Trend,
 };
 use egui_sauge::{
     Density, Elevation, Icon, Locale, Palette, RADIUS, SPACING, apply_theme_with, install_fonts,
@@ -55,6 +57,27 @@ struct Showcase {
     // Navigation demo state
     nav_route: NavRoute,
     detail_tab: DetailTab,
+
+    // v1.2 demo state
+    cb_accept: bool,
+    cb_promo: bool,
+    cb_indeterminate: bool,
+    radio_plan: Plan,
+    num_replicas: f64,
+    num_threshold: f64,
+    table_selection: std::collections::HashSet<usize>,
+    table_sort: Option<SortState>,
+    page: usize,
+    page_size: usize,
+    drawer_open: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+enum Plan {
+    #[default]
+    Free,
+    Pro,
+    Enterprise,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -106,6 +129,17 @@ impl Default for Showcase {
             toasts: Toasts::new(),
             nav_route: NavRoute::Servers,
             detail_tab: DetailTab::Details,
+            cb_accept: false,
+            cb_promo: true,
+            cb_indeterminate: true,
+            radio_plan: Plan::Pro,
+            num_replicas: 6.0,
+            num_threshold: 75.0,
+            table_selection: std::collections::HashSet::new(),
+            table_sort: Some(SortState::asc(1)),
+            page: 0,
+            page_size: 10,
+            drawer_open: false,
         }
     }
 }
@@ -142,6 +176,10 @@ impl eframe::App for Showcase {
             Section::new("Logs & data")
                 .description("LogLine, KeyValue, Skeleton.")
                 .show(ui, |ui| self.show_logs_and_data(ui));
+
+            Section::new("v1.2 — Forms, Data, Layout")
+                .description("Checkbox / RadioGroup / NumberField / Avatar / Drawer / Accordion / Table / Pagination.")
+                .show(ui, |ui| self.show_v12(ui));
 
             Section::new("Icons").show(ui, |ui| self.show_icons(ui));
         });
@@ -1079,6 +1117,381 @@ impl Showcase {
         }
         if deleted {
             self.toasts.error("Project deleted (demo).");
+        }
+    }
+
+    fn show_v12(&mut self, ui: &mut egui::Ui) {
+        // -- Forms row -----------------------------------------------------
+        ui.horizontal_top(|ui| {
+            // Checkboxes.
+            Card::new().title("Checkboxes").show(ui, |ui| {
+                ui.set_min_width(280.0);
+                ui.add(Checkbox::with_label(&mut self.cb_accept, "Accept terms"));
+                ui.add_space(SPACING.s2);
+                ui.add(Checkbox::with_label(
+                    &mut self.cb_promo,
+                    "Email me about new features",
+                ));
+                ui.add_space(SPACING.s2);
+                let mut master = false; // local "select all" master
+                ui.add(
+                    Checkbox::new(&mut master)
+                        .label("Select all (indeterminate)")
+                        .indeterminate(self.cb_indeterminate),
+                );
+                if master {
+                    self.cb_indeterminate = false;
+                }
+                ui.add_space(SPACING.s2);
+                let mut error_demo = true;
+                ui.add(Checkbox::with_label(&mut error_demo, "Required (error state)").error(true));
+            });
+
+            ui.add_space(SPACING.s3);
+
+            // Radio.
+            Card::new().title("Radio group").show(ui, |ui| {
+                ui.set_min_width(280.0);
+                RadioGroup::new(&mut self.radio_plan)
+                    .label("Subscription plan")
+                    .helper("Switch any time from billing settings.")
+                    .option(RadioOption::new(Plan::Free, "Free").helper("1 user, 100 deploys/mo"))
+                    .option(
+                        RadioOption::new(Plan::Pro, "Pro")
+                            .helper("Unlimited deploys, custom domains"),
+                    )
+                    .option(
+                        RadioOption::new(Plan::Enterprise, "Enterprise")
+                            .helper("SSO, audit logs, dedicated support"),
+                    )
+                    .show(ui);
+            });
+
+            ui.add_space(SPACING.s3);
+
+            // Numbers.
+            Card::new().title("Number fields").show(ui, |ui| {
+                ui.set_min_width(280.0);
+                NumberField::new(&mut self.num_replicas)
+                    .label("Replicas")
+                    .helper("Number of pods to run.")
+                    .min(1.0)
+                    .max(20.0)
+                    .desired_width(220.0)
+                    .show(ui);
+                ui.add_space(SPACING.s3);
+                NumberField::new(&mut self.num_threshold)
+                    .label("CPU alert threshold")
+                    .suffix("%")
+                    .min(0.0)
+                    .max(100.0)
+                    .step(5.0)
+                    .desired_width(220.0)
+                    .show(ui);
+            });
+        });
+
+        ui.add_space(SPACING.s4);
+
+        // -- Avatars row ---------------------------------------------------
+        Card::new().title("Avatars").show(ui, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(
+                    RichText::new("Sizes:")
+                        .text_style(TextStyle::Small)
+                        .color(self.palette.text_secondary),
+                );
+                ui.add(Avatar::initials("Alice Martin").size(AvatarSize::Xs));
+                ui.add(Avatar::initials("Alice Martin").size(AvatarSize::Sm));
+                ui.add(Avatar::initials("Alice Martin").size(AvatarSize::Md));
+                ui.add(Avatar::initials("Alice Martin").size(AvatarSize::Lg));
+                ui.add(Avatar::initials("Alice Martin").size(AvatarSize::Xl));
+            });
+            ui.add_space(SPACING.s3);
+            ui.horizontal(|ui| {
+                ui.label(
+                    RichText::new("Status dots:")
+                        .text_style(TextStyle::Small)
+                        .color(self.palette.text_secondary),
+                );
+                ui.add(
+                    Avatar::initials("Alice")
+                        .status(self.palette.success)
+                        .tooltip("Alice — online"),
+                );
+                ui.add(
+                    Avatar::initials("Bob Carter")
+                        .status(self.palette.warning)
+                        .tooltip("Bob — away"),
+                );
+                ui.add(Avatar::icon(Icon::Users).tooltip("Engineering team"));
+                ui.add(Avatar::icon(Icon::UserGear).tooltip("System / automation"));
+            });
+            ui.add_space(SPACING.s3);
+            ui.horizontal(|ui| {
+                ui.label(
+                    RichText::new("Group with overflow:")
+                        .text_style(TextStyle::Small)
+                        .color(self.palette.text_secondary),
+                );
+                AvatarGroup::new()
+                    .max_visible(4)
+                    .push(Avatar::initials("Alice Martin"))
+                    .push(Avatar::initials("Bob Carter"))
+                    .push(Avatar::initials("Chen Liu"))
+                    .push(Avatar::initials("Dora Eaton"))
+                    .push(Avatar::initials("Erika Schmidt"))
+                    .push(Avatar::initials("Felix Brown"))
+                    .push(Avatar::initials("Gina Park"))
+                    .show(ui);
+            });
+        });
+
+        ui.add_space(SPACING.s4);
+
+        // -- Accordion -----------------------------------------------------
+        Card::new().title("Accordion").show(ui, |ui| {
+            Accordion::new("Notification settings")
+                .icon(Icon::Bell)
+                .subtitle("Email, push, in-app")
+                .open()
+                .show(ui, |ui| {
+                    let mut a = true;
+                    let mut b = false;
+                    ui.add(Checkbox::with_label(&mut a, "Email · weekly digest"));
+                    ui.add(Checkbox::with_label(&mut b, "Email · per-deployment"));
+                    ui.add(Checkbox::with_label(&mut b, "Push · only failures"));
+                });
+            ui.add_space(SPACING.s2);
+            Accordion::new("Security")
+                .icon(Icon::ShieldCheck)
+                .subtitle("2FA, sessions, API keys")
+                .show(ui, |ui| {
+                    ui.label("(advanced security settings live here)");
+                });
+            ui.add_space(SPACING.s2);
+            Accordion::new("Danger zone")
+                .icon(Icon::Trash)
+                .show(ui, |ui| {
+                    let _ = ui.add(Button::danger("Delete workspace"));
+                });
+        });
+
+        ui.add_space(SPACING.s4);
+
+        // -- Table + Pagination -------------------------------------------
+        Card::new()
+            .title("Servers")
+            .subtitle("Click headers to sort, checkboxes to multi-select.")
+            .show(ui, |ui| {
+                #[derive(Clone)]
+                struct Row<'a> {
+                    name: &'a str,
+                    region: &'a str,
+                    status: StatusLevel,
+                    cpu: f32,
+                    mem: f32,
+                }
+                let all_rows: Vec<Row<'static>> = vec![
+                    Row {
+                        name: "api-eu-1",
+                        region: "eu-west-1",
+                        status: StatusLevel::Online,
+                        cpu: 42.0,
+                        mem: 56.0,
+                    },
+                    Row {
+                        name: "api-eu-2",
+                        region: "eu-west-1",
+                        status: StatusLevel::Online,
+                        cpu: 51.0,
+                        mem: 61.0,
+                    },
+                    Row {
+                        name: "api-eu-3",
+                        region: "eu-west-1",
+                        status: StatusLevel::Degraded,
+                        cpu: 86.0,
+                        mem: 71.0,
+                    },
+                    Row {
+                        name: "api-us-1",
+                        region: "us-east-1",
+                        status: StatusLevel::Online,
+                        cpu: 38.0,
+                        mem: 49.0,
+                    },
+                    Row {
+                        name: "api-us-2",
+                        region: "us-east-1",
+                        status: StatusLevel::Offline,
+                        cpu: 0.0,
+                        mem: 0.0,
+                    },
+                    Row {
+                        name: "api-us-3",
+                        region: "us-east-1",
+                        status: StatusLevel::Online,
+                        cpu: 44.0,
+                        mem: 52.0,
+                    },
+                    Row {
+                        name: "api-ap-1",
+                        region: "ap-northeast-1",
+                        status: StatusLevel::Online,
+                        cpu: 33.0,
+                        mem: 47.0,
+                    },
+                    Row {
+                        name: "api-ap-2",
+                        region: "ap-northeast-1",
+                        status: StatusLevel::Idle,
+                        cpu: 4.0,
+                        mem: 12.0,
+                    },
+                    Row {
+                        name: "worker-eu-1",
+                        region: "eu-west-1",
+                        status: StatusLevel::Online,
+                        cpu: 65.0,
+                        mem: 70.0,
+                    },
+                    Row {
+                        name: "worker-us-1",
+                        region: "us-east-1",
+                        status: StatusLevel::Online,
+                        cpu: 71.0,
+                        mem: 68.0,
+                    },
+                    Row {
+                        name: "queue-eu-1",
+                        region: "eu-west-1",
+                        status: StatusLevel::Online,
+                        cpu: 22.0,
+                        mem: 30.0,
+                    },
+                    Row {
+                        name: "cron-eu-1",
+                        region: "eu-west-1",
+                        status: StatusLevel::Idle,
+                        cpu: 1.0,
+                        mem: 8.0,
+                    },
+                ];
+                // Apply sort to a local copy.
+                let mut rows = all_rows.clone();
+                if let Some(s) = self.table_sort {
+                    rows.sort_by(|a, b| {
+                        let ord = match s.column {
+                            1 => a.name.cmp(b.name),
+                            2 => a.region.cmp(b.region),
+                            3 => a
+                                .status
+                                .partial_cmp(&b.status)
+                                .unwrap_or(std::cmp::Ordering::Equal),
+                            4 => a
+                                .cpu
+                                .partial_cmp(&b.cpu)
+                                .unwrap_or(std::cmp::Ordering::Equal),
+                            5 => a
+                                .mem
+                                .partial_cmp(&b.mem)
+                                .unwrap_or(std::cmp::Ordering::Equal),
+                            _ => std::cmp::Ordering::Equal,
+                        };
+                        if s.ascending { ord } else { ord.reverse() }
+                    });
+                }
+                let total = rows.len();
+                let from = self.page * self.page_size;
+                let to = (from + self.page_size).min(total);
+                let page_rows = &rows[from..to];
+
+                Table::new(page_rows)
+                    .selectable(&mut self.table_selection)
+                    .sort(&mut self.table_sort)
+                    .column("Name", |ui, r| {
+                        let palette = egui_sauge::palette_of(ui.ctx());
+                        ui.label(
+                            RichText::new(r.name)
+                                .text_style(TextStyle::Body)
+                                .color(palette.text_primary),
+                        );
+                    })
+                    .last(Column::sortable)
+                    .column_text("Region", |r| r.region.to_string())
+                    .last(Column::sortable)
+                    .column("Status", |ui, r| {
+                        ui.add(StatusDot::new(r.status));
+                    })
+                    .last(Column::sortable)
+                    .column_text("CPU", |r| format!("{:.0}%", r.cpu))
+                    .last(|c| c.sortable().align_right())
+                    .column_text("Mem", |r| format!("{:.0}%", r.mem))
+                    .last(|c| c.sortable().align_right())
+                    .show(ui);
+
+                ui.add_space(SPACING.s3);
+                Pagination::new(&mut self.page, total, &mut self.page_size)
+                    .page_sizes([5, 10, 25])
+                    .show(ui);
+            });
+
+        ui.add_space(SPACING.s4);
+
+        // -- Drawer trigger ------------------------------------------------
+        Card::new()
+            .title("Drawer (non-blocking side panel)")
+            .show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    if ui
+                        .add(Button::primary("Open filters drawer").leading(Icon::Filter))
+                        .clicked()
+                    {
+                        self.drawer_open = true;
+                    }
+                    ui.label(
+                        RichText::new("Drawer slides in on the right. Underneath stays clickable.")
+                            .text_style(TextStyle::Small)
+                            .color(self.palette.text_secondary),
+                    );
+                });
+            });
+
+        // The drawer is rendered last (taking precedence over the central
+        // area) — see `ui` callback in the main `App::ui`.
+        if self.drawer_open
+            && Drawer::new("Filters").width(320.0).show(ui, true, |ui| {
+                ui.label(
+                    RichText::new("Region")
+                        .text_style(TextStyle::Small)
+                        .color(self.palette.text_secondary),
+                );
+                let mut eu = true;
+                let mut us = true;
+                let mut ap = false;
+                ui.add(Checkbox::with_label(&mut eu, "EU West"));
+                ui.add(Checkbox::with_label(&mut us, "US East"));
+                ui.add(Checkbox::with_label(&mut ap, "AP Northeast"));
+                ui.add_space(SPACING.s3);
+                ui.label(
+                    RichText::new("Status")
+                        .text_style(TextStyle::Small)
+                        .color(self.palette.text_secondary),
+                );
+                let mut online = true;
+                let mut degraded = false;
+                let mut offline = false;
+                ui.add(Checkbox::with_label(&mut online, "Online"));
+                ui.add(Checkbox::with_label(&mut degraded, "Degraded"));
+                ui.add(Checkbox::with_label(&mut offline, "Offline"));
+                ui.add_space(SPACING.s4);
+                ui.horizontal(|ui| {
+                    let _ = ui.add(Button::primary("Apply filters").full_width());
+                });
+            })
+        {
+            self.drawer_open = false;
         }
     }
 

@@ -18,38 +18,54 @@ pub(crate) fn alpha(c: Color32, factor: f32) -> Color32 {
     Color32::from_rgba_unmultiplied(r, g, b, a)
 }
 
+mod accordion;
 mod alert;
+mod avatar;
 mod button;
 mod card;
+mod checkbox;
 mod data;
 mod dialog;
+mod drawer;
 mod feedback;
 mod header;
 mod input;
 mod menu;
 mod nav;
+mod number;
+mod pagination;
+mod radio;
 mod section;
 mod select;
 mod stat;
 mod status;
 mod switch;
+mod table;
 mod toast;
 mod tooltip;
 
+pub use accordion::Accordion;
 pub use alert::{Alert, Level};
+pub use avatar::{Avatar, AvatarGroup, AvatarSize};
 pub use button::{Button, ButtonSize, ButtonVariant, IconButton};
 pub use card::{Card, EmptyState};
+pub use checkbox::Checkbox;
 pub use data::{KeyValue, LogLevel, LogLine, Skeleton};
 pub use dialog::{ConfirmDialog, Dialog, DialogControl};
+pub use drawer::Drawer;
 pub use feedback::{ProgressBar, Spinner};
 pub use header::PageHeader;
 pub use input::InputField;
 pub use menu::{MenuItem, SubMenu};
 pub use nav::{Breadcrumb, NavItem, Tabs};
+pub use number::NumberField;
+pub use pagination::Pagination;
+pub use radio::{RadioGroup, RadioLayout, RadioOption};
 pub use section::{CodeBlock, Section};
 pub use select::SelectField;
 pub use stat::{Stat, Trend};
 pub use status::{Badge, BadgeTone, Kbd, StatusDot, StatusLevel, Tag};
 pub use switch::Switch;
+pub use table::{Column, ColumnAlign, SortState, Table};
 pub use toast::{Toast, Toasts};
 pub use tooltip::{TooltipExt, tooltip};
