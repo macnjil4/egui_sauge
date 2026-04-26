@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-04-26
+
+Closes the original v1.2 component plan. No breaking changes.
+
+### Added
+- `Sparkline` — inline mini-chart (line, bars, or area) with optional
+  pinned y-range and trailing dot marker. Zero-dep, paints via
+  `Painter`.
+- `Gauge` — ring (donut, 270°) or horizontal bar variant with
+  threshold-aware fill (`brand` → `warning` ≥ 75% → `error` ≥ 90%) and
+  inline percent readout.
+- `Timeline` — vertical event list with semantic-colored markers
+  (icon + level), connector line, timestamp + title + optional body.
+- `DiffView` — unified-style code diff with old/new line-number gutters,
+  `+`/`−` markers, sage-tinted backgrounds for added / removed lines,
+  and an optional file-path header.
+- `CommandPalette` (⌘K) — modal action picker with case-insensitive
+  substring search over labels and `keywords`, optional grouping,
+  keyboard navigation (↑/↓/Enter/Esc), shortcut hints, scrim, themed
+  Modal shadow. Returns `Some(action_index)` when activated.
+
+### Changed
+- `examples/showcase.rs`: new "v1.3 — Charts, Logs, ⌘K" section
+  demonstrating every new component; ⌘K / Ctrl+K opens the
+  CommandPalette globally.
+- `GUIDE.md` IT-app patterns: Health dashboard now references
+  `Sparkline` + `Gauge` + `Timeline`; new "Command palette" and
+  "Config diff" sections.
+
 ## [1.2.0] — 2026-04-26
 
 IT-app components release. No breaking changes.

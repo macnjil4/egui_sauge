@@ -1,6 +1,6 @@
 [package]
 name = "egui_sauge"
-version = "1.2.0"
+version = "1.3.0"
 edition = "2024"
 rust-version = "1.92"
 authors = ["egui_sauge contributors"]
@@ -12,7 +12,16 @@ license = "Apache-2.0"
 readme = "README.md"
 keywords = ["egui", "design-system", "theme", "ui", "accessibility"]
 categories = ["gui", "visualization"]
-exclude = ["/assets/fonts/*.md", "/.github", "/.idea", "/.claude"]
+exclude = [
+    "/assets/fonts/*.md",
+    "/.github",
+    "/.idea",
+    "/.claude",
+    # Local reference assets — not part of the published crate.
+    "/*.png",
+    "/*.jpg",
+    "/*.jpeg",
+]
 
 [package.metadata.docs.rs]
 all-features = true

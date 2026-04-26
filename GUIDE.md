@@ -230,10 +230,21 @@ Pagination::new(&mut page, total, &mut page_size)
 ## 11. Patterns IT-spécifiques
 
 ### Health dashboard
-- `Stat` pour les KPIs hauts (sessions, erreurs, p99, coût).
+- `Stat` pour les KPIs hauts (sessions, erreurs, p99, coût). Couplez avec un `Sparkline` pour le trend 24 h en arrière-plan.
+- `Gauge::ring()` pour les jauges CPU / Mem / Disk (seuils auto à 75% warning, 90% error). `Gauge::bar()` quand on en empile plusieurs.
 - `StatusDot::new(StatusLevel::Online).pulse()` pour chaque service.
-- `LogLine` (avec timestamp) pour la queue d'événements récents.
+- `LogLine` (avec timestamp) pour la queue d'événements récents, ou `Timeline` quand chaque événement a un titre + body distinct (audit trail).
 - `Alert` (Warning/Error) au-dessus des KPIs si incident actif.
+
+### Command palette (⌘K)
+- Universel sur les apps IT modernes. `CommandPalette::new().action(...).show(ctx, &mut open)`.
+- Toujours déclencher depuis `ctx.input(|i| i.modifiers.command && i.key_pressed(Key::K))` — l'utilisateur s'y attend.
+- Groupez par catégorie (Navigation, Deployments, Preferences) ; max 5-7 catégories.
+- Action labels en verbe d'action ("Open server list", "Roll back to previous version") — pas en nom ("Servers", "Rollback").
+- `keywords([...])` pour les synonymes (`"revert"`, `"undo"`, `"a11y"`, `"theme"`).
+
+### Config diff / change preview
+- `DiffView` pour les configs YAML/JSON, les changements de feature flags, les resource specs avant déploiement. Header = chemin du fichier.
 
 ### Liste de ressources (servers, secrets, deployments…)
 - Sidebar nav avec `NavItem`.

@@ -3,3 +3,9 @@
 /.claude
 .DS_Store
 
+# Local reference images / screenshots — keep them out of git AND
+# out of the published crate (also excluded via Cargo.toml `exclude`).
+/*.png
+/*.jpg
+/*.jpeg
+

@@ -43,11 +43,12 @@ fn main() -> eframe::Result<()> {
 | Buttons | `Button` (Primary / Secondary / Ghost / Danger × Sm / Md / Lg, leading & trailing icons), `IconButton` (with tooltip) |
 | Status & badges | `Badge`, `Tag` (closable), `StatusDot` (online / degraded / offline / idle, pulse), `Kbd`, `Avatar` / `AvatarGroup` (initials / icon / image, status dot) |
 | Feedback | `Spinner`, `ProgressBar`, `Alert`, `Toast` / `Toasts` (auto-dismiss stack) |
+| Charts | `Sparkline` (line / bars / area), `Gauge` (ring / bar, threshold-aware) |
 | Containers | `Card`, `Section`, `EmptyState`, `Stat` (with trend), `CodeBlock`, `Accordion` |
 | Forms | `InputField` (label / helper / error / icons / password), `SelectField`, `Switch`, `Checkbox` (with indeterminate), `RadioGroup<T>`, `NumberField` (stepper, suffix, min/max) |
-| Overlays | `Dialog`, `ConfirmDialog`, `Drawer`, `MenuItem`, `SubMenu` (nests arbitrarily deep), `tooltip(...)` / `TooltipExt` |
+| Overlays | `Dialog`, `ConfirmDialog`, `Drawer`, `CommandPalette` (⌘K, fuzzy search, keyboard nav), `MenuItem`, `SubMenu` (nests arbitrarily deep), `tooltip(...)` / `TooltipExt` |
 | Navigation | `NavItem`, `Tabs<T>`, `Breadcrumb`, `PageHeader` |
-| Data | `Table<T>` (typed columns, sortable, selectable), `Pagination`, `KeyValue`, `LogLine` (timestamped, level-colored), `Skeleton` |
+| Data | `Table<T>` (typed columns, sortable, selectable), `Pagination`, `KeyValue`, `LogLine` (timestamped, level-colored), `Timeline`, `DiffView`, `Skeleton` |
 
 See `GUIDE.md` for the **UX/UI playbook** — page composition, when to use each navigation pattern, modal vs side panel, button order, typography hierarchy, accessibility checklist, IT-app patterns.
 
@@ -68,10 +69,10 @@ The crate is not yet on crates.io. Pick the option that fits your workflow:
 egui_sauge = { path = "../egui_sauge" }
 
 # Option 2 — git
-egui_sauge = { git = "https://github.com/macnjil4/egui_sauge", tag = "v1.2.0" }
+egui_sauge = { git = "https://github.com/macnjil4/egui_sauge", tag = "v1.3.0" }
 
 # Option 3 — crates.io (once published)
-egui_sauge = "1.2"
+egui_sauge = "1.3"
 
 # In all cases, your egui must match egui_sauge's pinned version:
 egui   = "0.34"

@@ -5,10 +5,11 @@ use eframe::egui;
 use egui::{Color32, RichText, Sense, Stroke, TextStyle, Vec2, vec2};
 use egui_sauge::components::{
     Accordion, Alert, Avatar, AvatarGroup, AvatarSize, Badge, BadgeTone, Breadcrumb, Button,
-    ButtonSize, Card, Checkbox, CodeBlock, Column, ConfirmDialog, Dialog, Drawer, EmptyState,
-    InputField, Kbd, KeyValue, Level, LogLevel, LogLine, MenuItem, NavItem, NumberField,
-    PageHeader, Pagination, ProgressBar, RadioGroup, RadioOption, Section, SelectField, Skeleton,
-    SortState, Spinner, Stat, StatusDot, StatusLevel, SubMenu, Switch, Table, Tabs, Tag, Toasts,
+    ButtonSize, Card, Checkbox, CodeBlock, Column, CommandAction, CommandPalette, ConfirmDialog,
+    Dialog, DiffLine, DiffView, Drawer, EmptyState, Gauge, InputField, Kbd, KeyValue, Level,
+    LogLevel, LogLine, MenuItem, NavItem, NumberField, PageHeader, Pagination, ProgressBar,
+    RadioGroup, RadioOption, Section, SelectField, Skeleton, SortState, Sparkline, Spinner, Stat,
+    StatusDot, StatusLevel, SubMenu, Switch, Table, Tabs, Tag, Timeline, TimelineEvent, Toasts,
     TooltipExt, Trend,
 };
 use egui_sauge::{
@@ -70,6 +71,7 @@ struct Showcase {
     page: usize,
     page_size: usize,
     drawer_open: bool,
+    cmd_palette_open: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -140,12 +142,20 @@ impl Default for Showcase {
             page: 0,
             page_size: 10,
             drawer_open: false,
+            cmd_palette_open: false,
         }
     }
 }
 
 impl eframe::App for Showcase {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        // Global shortcut: open the command palette on ⌘K / Ctrl+K.
+        if ui
+            .ctx()
+            .input(|i| i.modifiers.command && i.key_pressed(egui::Key::K))
+        {
+            self.cmd_palette_open = true;
+        }
         self.topbar(ui);
 
         egui::ScrollArea::vertical().show(ui, |ui| {
@@ -181,6 +191,13 @@ impl eframe::App for Showcase {
                 .description("Checkbox / RadioGroup / NumberField / Avatar / Drawer / Accordion / Table / Pagination.")
                 .show(ui, |ui| self.show_v12(ui));
 
+            Section::new("v1.3 — Charts, Logs, ⌘K")
+                .description(
+                    "Sparkline / Gauge / Timeline / DiffView / CommandPalette. \
+                     Press ⌘K (or Ctrl+K) to open the palette.",
+                )
+                .show(ui, |ui| self.show_v13(ui));
+
             Section::new("Icons").show(ui, |ui| self.show_icons(ui));
         });
 
@@ -190,6 +207,89 @@ impl eframe::App for Showcase {
         // Dialog — called from the Overlays section state but rendered here
         // so it overlays everything.
         self.render_dialog(ui.ctx());
+
+        // Command palette: render last, on top of everything else.
+        if let Some(idx) = CommandPalette::new()
+            .placeholder("Type a command or search…")
+            .action(
+                CommandAction::new("New deployment")
+                    .icon(Icon::Rocket)
+                    .group("Deployments")
+                    .shortcut("⌘D"),
+            )
+            .action(
+                CommandAction::new("Roll back to previous version")
+                    .icon(Icon::Refresh)
+                    .group("Deployments")
+                    .keywords(["revert", "undo"]),
+            )
+            .action(
+                CommandAction::new("Open server list")
+                    .icon(Icon::Server)
+                    .group("Navigation")
+                    .shortcut("g s"),
+            )
+            .action(
+                CommandAction::new("Open logs")
+                    .icon(Icon::FileText)
+                    .group("Navigation")
+                    .shortcut("g l"),
+            )
+            .action(
+                CommandAction::new("Invite team member")
+                    .icon(Icon::Users)
+                    .group("Team"),
+            )
+            .action(
+                CommandAction::new("Toggle dark mode")
+                    .icon(Icon::Moon)
+                    .group("Preferences")
+                    .keywords(["theme"]),
+            )
+            .action(
+                CommandAction::new("Toggle reduce motion")
+                    .icon(Icon::Eye)
+                    .group("Preferences")
+                    .keywords(["a11y", "accessibility"]),
+            )
+            .action(
+                CommandAction::new("Sign out")
+                    .icon(Icon::Lock)
+                    .group("Account")
+                    .keywords(["logout"]),
+            )
+            .show(ui.ctx(), &mut self.cmd_palette_open)
+        {
+            // Map indices back to side-effects.
+            match idx {
+                5 => {
+                    self.dark = !self.dark;
+                    self.palette = if self.dark {
+                        Palette::dark()
+                    } else {
+                        Palette::light()
+                    };
+                    apply_theme_with(ui.ctx(), &self.palette, self.density);
+                    self.toasts.success(if self.dark {
+                        "Dark mode on."
+                    } else {
+                        "Light mode on."
+                    });
+                }
+                6 => {
+                    self.reduce_motion = !self.reduce_motion;
+                    set_reduce_motion(ui.ctx(), self.reduce_motion);
+                    self.toasts.info(if self.reduce_motion {
+                        "Reduce motion: on."
+                    } else {
+                        "Reduce motion: off."
+                    });
+                }
+                _ => {
+                    self.toasts.info(format!("Command #{idx} triggered."));
+                }
+            }
+        }
     }
 }
 
@@ -1493,6 +1593,179 @@ impl Showcase {
         {
             self.drawer_open = false;
         }
+    }
+
+    fn show_v13(&mut self, ui: &mut egui::Ui) {
+        // -- Sparklines + Gauges row --------------------------------------
+        ui.horizontal_top(|ui| {
+            Card::new().title("Sparklines").show(ui, |ui| {
+                ui.set_min_width(360.0);
+                let cpu = [
+                    35.0_f32, 42.0, 38.0, 51.0, 49.0, 65.0, 71.0, 68.0, 80.0, 84.0, 79.0, 86.0,
+                ];
+                let lat = [
+                    180.0_f32, 175.0, 182.0, 190.0, 188.0, 192.0, 200.0, 195.0, 184.0, 188.0,
+                    179.0, 184.0,
+                ];
+                let req = [
+                    420.0_f32, 480.0, 510.0, 530.0, 600.0, 620.0, 700.0, 720.0, 690.0, 730.0,
+                    760.0, 800.0,
+                ];
+
+                let row = |ui: &mut egui::Ui, label: &str, value: &str, sl: Sparkline| {
+                    ui.horizontal(|ui| {
+                        ui.add_sized(
+                            vec2(120.0, 20.0),
+                            egui::Label::new(
+                                RichText::new(label)
+                                    .text_style(TextStyle::Small)
+                                    .color(self.palette.text_secondary),
+                            ),
+                        );
+                        ui.add(sl);
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            ui.label(
+                                RichText::new(value)
+                                    .font(egui::FontId::new(13.0, egui::FontFamily::Monospace))
+                                    .color(self.palette.text_primary),
+                            );
+                        });
+                    });
+                };
+                row(
+                    ui,
+                    "CPU avg (24 h)",
+                    "86%",
+                    Sparkline::new(&cpu).area().color(self.palette.warning),
+                );
+                row(ui, "p99 latency (ms)", "184 ms", Sparkline::new(&lat));
+                row(
+                    ui,
+                    "Requests / s",
+                    "800",
+                    Sparkline::new(&req).bars().color(self.palette.info),
+                );
+            });
+
+            ui.add_space(SPACING.s3);
+
+            Card::new().title("Gauges").show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    ui.add(Gauge::ring(0.42).label("CPU").size(72.0));
+                    ui.add_space(SPACING.s3);
+                    ui.add(Gauge::ring(0.78).label("Memory").size(72.0));
+                    ui.add_space(SPACING.s3);
+                    ui.add(Gauge::ring(0.94).label("Disk").size(72.0));
+                });
+                ui.add_space(SPACING.s3);
+                ui.set_min_width(420.0);
+                ui.add(Gauge::bar(0.42).label("CPU"));
+                ui.add_space(SPACING.s2);
+                ui.add(Gauge::bar(0.78).label("Memory"));
+                ui.add_space(SPACING.s2);
+                ui.add(Gauge::bar(0.94).label("Disk"));
+            });
+        });
+
+        ui.add_space(SPACING.s4);
+
+        // -- Timeline + DiffView side-by-side ----------------------------
+        ui.horizontal_top(|ui| {
+            Card::new().title("Deployment timeline").show(ui, |ui| {
+                ui.set_min_width(380.0);
+                Timeline::new()
+                    .event(
+                        TimelineEvent::new(Level::Info, "Build started")
+                            .timestamp("14:02:11")
+                            .body("cargo build --release on api/"),
+                    )
+                    .event(
+                        TimelineEvent::new(Level::Success, "Tests passed")
+                            .timestamp("14:02:41")
+                            .body("412 tests · 0 failures · 19 skipped"),
+                    )
+                    .event(
+                        TimelineEvent::new(Level::Info, "Image pushed")
+                            .icon(Icon::Package)
+                            .timestamp("14:03:52")
+                            .body("registry/api:1.8.4 (142 MiB)"),
+                    )
+                    .event(
+                        TimelineEvent::new(Level::Warning, "Slow rollout")
+                            .timestamp("14:04:02")
+                            .body("3 pods taking > 30 s to become ready"),
+                    )
+                    .event(
+                        TimelineEvent::new(Level::Success, "Rollout complete")
+                            .icon(Icon::Rocket)
+                            .timestamp("14:04:21")
+                            .body("api-prod-eu replicas: 6/6"),
+                    )
+                    .show(ui);
+            });
+
+            ui.add_space(SPACING.s3);
+
+            Card::new()
+                .title("Config diff")
+                .subtitle("apps/api/values.prod.yaml")
+                .show(ui, |ui| {
+                    ui.set_min_width(420.0);
+                    DiffView::new()
+                        .header("apps/api/values.prod.yaml")
+                        .line(DiffLine::hunk("@@ -10,5 +10,7 @@"))
+                        .line(DiffLine::context(10, 10, "image:"))
+                        .line(DiffLine::removed(11, "  tag: 1.8.3"))
+                        .line(DiffLine::added(11, "  tag: 1.8.4"))
+                        .line(DiffLine::context(12, 12, "replicas: 6"))
+                        .line(DiffLine::context(13, 13, "resources:"))
+                        .line(DiffLine::context(14, 14, "  requests:"))
+                        .line(DiffLine::removed(15, "    cpu: 500m"))
+                        .line(DiffLine::added(15, "    cpu: 800m"))
+                        .line(DiffLine::added(16, "    memory: 1Gi"))
+                        .show(ui);
+                });
+        });
+
+        ui.add_space(SPACING.s4);
+
+        // -- Command palette trigger -------------------------------------
+        Card::new().title("Command palette (⌘K)").show(ui, |ui| {
+            ui.horizontal(|ui| {
+                if ui
+                    .add(Button::primary("Open command palette").leading(Icon::Search))
+                    .clicked()
+                {
+                    self.cmd_palette_open = true;
+                }
+                ui.add_space(SPACING.s2);
+                ui.label(
+                    RichText::new("Or press")
+                        .text_style(TextStyle::Body)
+                        .color(self.palette.text_secondary),
+                );
+                ui.add(Kbd::new("⌘K"));
+                ui.label(
+                    RichText::new("/")
+                        .text_style(TextStyle::Body)
+                        .color(self.palette.text_tertiary),
+                );
+                ui.add(Kbd::new("Ctrl+K"));
+                ui.label(
+                    RichText::new("anywhere.")
+                        .text_style(TextStyle::Body)
+                        .color(self.palette.text_secondary),
+                );
+            });
+            ui.add_space(SPACING.s2);
+            ui.label(
+                RichText::new(
+                    "Try: \"dark\", \"deploy\", \"logs\", \"a11y\". Up/Down to navigate, Enter to run.",
+                )
+                .text_style(TextStyle::Small)
+                .color(self.palette.text_tertiary),
+            );
+        });
     }
 
     fn show_icons(&mut self, ui: &mut egui::Ui) {
