@@ -16,15 +16,23 @@ pub enum Locale {
     En,
     /// French.
     Fr,
+    /// German.
+    De,
+    /// Spanish.
+    Es,
 }
 
 impl Locale {
     /// Best-effort parse from a BCP-47 / ISO-639 prefix, e.g. `"fr-FR"`,
-    /// `"FR"`, `"french"`. Anything not French falls back to English.
+    /// `"de_DE"`, `"es"`, `"english"`. Unknown codes fall back to English.
     pub fn from_lang_code(code: &str) -> Self {
         let lower = code.to_ascii_lowercase();
         if lower.starts_with("fr") || lower.starts_with("french") {
             Self::Fr
+        } else if lower.starts_with("de") || lower.starts_with("german") {
+            Self::De
+        } else if lower.starts_with("es") || lower.starts_with("spanish") {
+            Self::Es
         } else {
             Self::En
         }
@@ -62,5 +70,19 @@ pub(crate) fn tr(locale: Locale, key: Key) -> &'static str {
         (Fr, StatusIdle) => "Inactif",
         (Fr, ConfirmDefault) => "Confirmer",
         (Fr, CancelDefault) => "Annuler",
+
+        (De, StatusOnline) => "Online",
+        (De, StatusDegraded) => "Beeinträchtigt",
+        (De, StatusOffline) => "Offline",
+        (De, StatusIdle) => "Inaktiv",
+        (De, ConfirmDefault) => "Bestätigen",
+        (De, CancelDefault) => "Abbrechen",
+
+        (Es, StatusOnline) => "En línea",
+        (Es, StatusDegraded) => "Degradado",
+        (Es, StatusOffline) => "Desconectado",
+        (Es, StatusIdle) => "Inactivo",
+        (Es, ConfirmDefault) => "Confirmar",
+        (Es, CancelDefault) => "Cancelar",
     }
 }

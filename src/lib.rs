@@ -53,7 +53,7 @@
 //!
 //! [egui]: https://github.com/emilk/egui
 
-#![doc(html_root_url = "https://docs.rs/egui_sauge/1.0.0")]
+#![doc(html_root_url = "https://docs.rs/egui_sauge/1.1.0")]
 // Pedantic lints we deliberately silence:
 // - `must_use_candidate` / `return_self_not_must_use`: every builder here is
 //   chain-style; #[must_use] would be noise on ~180 setters.
@@ -77,13 +77,13 @@ mod theme;
 pub mod components;
 
 pub use icons::{Icon, IconPainter};
-pub use text::install_fonts;
+pub use text::{install_fonts, install_phosphor_variant};
 pub use theme::{
     apply::{apply_theme, apply_theme_with},
     density::Density,
     elevation::Elevation,
     locale::Locale,
     palette::Palette,
-    state::{density_of, locale_of, palette_of, set_locale},
+    state::{density_of, locale_of, palette_of, reduce_motion, set_locale, set_reduce_motion},
     tokens::{RADIUS, Radius, SPACING, Spacing},
 };

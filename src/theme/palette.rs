@@ -131,6 +131,32 @@ impl Palette {
     }
 }
 
+impl Palette {
+    /// Build a palette from a base ([`Self::light`] or [`Self::dark`]) and a
+    /// closure that overrides individual roles. Useful when you want the
+    /// egui_sauge typography / spacing / icons but a different brand color.
+    ///
+    /// All fields are `pub`, so functional update syntax works too:
+    ///
+    /// ```no_run
+    /// use egui_sauge::Palette;
+    /// let p = Palette::custom(Palette::light(), |p| {
+    ///     p.brand_default = egui::Color32::from_rgb(0x1F, 0x4D, 0xC2);
+    ///     p.brand_hover   = egui::Color32::from_rgb(0x18, 0x3A, 0x96);
+    ///     p.brand_pressed = egui::Color32::from_rgb(0x10, 0x27, 0x66);
+    /// });
+    /// ```
+    ///
+    /// Customising colors bypasses the WCAG AA invariant enforced for the
+    /// stock light/dark palettes by `tests/contrast.rs`. Verify your
+    /// custom values yourself if you publish to end users.
+    pub fn custom(base: Self, mut overrides: impl FnMut(&mut Self)) -> Self {
+        let mut p = base;
+        overrides(&mut p);
+        p
+    }
+}
+
 impl Default for Palette {
     fn default() -> Self {
         Self::light()

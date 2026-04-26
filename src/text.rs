@@ -41,6 +41,30 @@ fn install_egui_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
+/// Register an additional [`egui_phosphor::Variant`] on top of the regular
+/// font that [`install_fonts`] already wires.
+///
+/// Useful when you want filled or bold icons for selected / active states.
+/// Enable the matching Cargo feature first (`icons-bold`, `icons-fill`,
+/// `icons-light`, `icons-thin`) so the variant's constants are available.
+///
+/// ```ignore
+/// # // Cargo.toml: egui_sauge = { version = "1.1", features = ["icons-fill"] }
+/// egui_sauge::install_fonts(ctx);
+/// egui_sauge::install_phosphor_variant(ctx, egui_phosphor::Variant::Fill);
+/// // Then anywhere:
+/// egui_sauge::Icon::Glyph(egui_phosphor::fill::HEART).show(ui, 16.0, color);
+/// ```
+///
+/// Calling this overrides the previously registered Phosphor font with
+/// the new variant. To use multiple weights simultaneously you currently
+/// need to manage `FontDefinitions` yourself.
+pub fn install_phosphor_variant(ctx: &egui::Context, variant: egui_phosphor::Variant) {
+    let mut fonts = egui::FontDefinitions::default();
+    egui_phosphor::add_to_fonts(&mut fonts, variant);
+    ctx.set_fonts(fonts);
+}
+
 fn install_text_styles(ctx: &egui::Context) {
     // Apply to BOTH stored styles (egui keeps separate light/dark Style values
     // and we don't know which one egui will pick depending on the system /

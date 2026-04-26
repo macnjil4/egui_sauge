@@ -10,10 +10,22 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    name: ${{ matrix.os }} · ${{ matrix.toolchain }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        toolchain: [stable, "1.92"]   # stable + MSRV
     steps:
       - uses: actions/checkout@v5
+
+      - name: Install Rust ${{ matrix.toolchain }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: rustfmt, clippy
 
       - name: Cache cargo registry and build
         uses: actions/cache@v5
@@ -22,18 +34,39 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ matrix.toolchain }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ runner.os }}-${{ matrix.toolchain }}-cargo-
 
+      # fmt + clippy only run on stable Linux to avoid noisy duplicate runs.
       - name: Check formatting
+        if: matrix.os == 'ubuntu-latest' && matrix.toolchain == 'stable'
         run: cargo fmt --all -- --check
 
       - name: Lint with Clippy
+        if: matrix.os == 'ubuntu-latest' && matrix.toolchain == 'stable'
         run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Build
-        run: cargo build --verbose
+        run: cargo build --all-features --verbose
 
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo test --all-features --verbose
+
+  docs:
+    name: docs.rs build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-docs-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Build docs (strict)
+        env:
+          RUSTDOCFLAGS: "-D warnings -D rustdoc::broken_intra_doc_links"
+        run: cargo doc --no-deps --all-features

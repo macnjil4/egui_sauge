@@ -11,7 +11,7 @@ use egui_sauge::components::{
 };
 use egui_sauge::{
     Density, Elevation, Icon, Locale, Palette, RADIUS, SPACING, apply_theme_with, install_fonts,
-    set_locale,
+    set_locale, set_reduce_motion,
 };
 
 fn main() -> eframe::Result<()> {
@@ -36,6 +36,8 @@ struct Showcase {
     locale: Locale,
     dark: bool,
     compact: bool,
+    spacious: bool,
+    reduce_motion: bool,
 
     // Input demo state
     email: String,
@@ -89,6 +91,8 @@ impl Default for Showcase {
             locale: Locale::En,
             dark: false,
             compact: false,
+            spacious: false,
+            reduce_motion: false,
             email: "alice@example.com".into(),
             email_error: false,
             password: "••••••".into(),
@@ -170,18 +174,33 @@ impl Showcase {
                 );
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     let dark_changed = ui.checkbox(&mut self.dark, "Dark").changed();
-                    let compact_changed = ui.checkbox(&mut self.compact, "Compact").changed();
-                    if dark_changed || compact_changed {
+                    let prev_density = self.density;
+                    egui::ComboBox::from_id_salt("density")
+                        .selected_text(match self.density {
+                            Density::Spacious => "Spacious",
+                            Density::Comfortable => "Comfortable",
+                            Density::Compact => "Compact",
+                        })
+                        .width(120.0)
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(&mut self.density, Density::Spacious, "Spacious");
+                            ui.selectable_value(
+                                &mut self.density,
+                                Density::Comfortable,
+                                "Comfortable",
+                            );
+                            ui.selectable_value(&mut self.density, Density::Compact, "Compact");
+                        });
+                    let density_changed = self.density != prev_density;
+                    if dark_changed || density_changed {
                         self.palette = if self.dark {
                             Palette::dark()
                         } else {
                             Palette::light()
                         };
-                        self.density = if self.compact {
-                            Density::Compact
-                        } else {
-                            Density::Comfortable
-                        };
+                        // Keep the legacy bool flags coherent for any code below.
+                        self.compact = matches!(self.density, Density::Compact);
+                        self.spacious = matches!(self.density, Density::Spacious);
                         apply_theme_with(ui.ctx(), &self.palette, self.density);
                     }
                     ui.add_space(SPACING.s2);
@@ -190,14 +209,25 @@ impl Showcase {
                         .selected_text(match self.locale {
                             Locale::En => "EN",
                             Locale::Fr => "FR",
+                            Locale::De => "DE",
+                            Locale::Es => "ES",
                         })
                         .width(56.0)
                         .show_ui(ui, |ui| {
                             ui.selectable_value(&mut self.locale, Locale::En, "EN — English");
                             ui.selectable_value(&mut self.locale, Locale::Fr, "FR — Français");
+                            ui.selectable_value(&mut self.locale, Locale::De, "DE — Deutsch");
+                            ui.selectable_value(&mut self.locale, Locale::Es, "ES — Español");
                         });
                     if prev_locale != self.locale {
                         set_locale(ui.ctx(), self.locale);
+                    }
+                    ui.add_space(SPACING.s2);
+                    if ui
+                        .checkbox(&mut self.reduce_motion, "Reduce motion")
+                        .changed()
+                    {
+                        set_reduce_motion(ui.ctx(), self.reduce_motion);
                     }
                 });
             });

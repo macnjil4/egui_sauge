@@ -20,6 +20,10 @@ fn locale_id() -> egui::Id {
     egui::Id::new("egui_sauge::locale")
 }
 
+fn reduce_motion_id() -> egui::Id {
+    egui::Id::new("egui_sauge::reduce_motion")
+}
+
 pub(crate) fn store(ctx: &egui::Context, palette: &Palette, density: Density) {
     ctx.data_mut(|d| {
         d.insert_temp(palette_id(), *palette);
@@ -56,4 +60,19 @@ pub fn locale_of(ctx: &egui::Context) -> Locale {
 /// safe to call anytime; affected components pick up the change next frame.
 pub fn set_locale(ctx: &egui::Context, locale: Locale) {
     ctx.data_mut(|d| d.insert_temp(locale_id(), locale));
+}
+
+/// Whether motion-sensitive UIs should freeze their animations.
+///
+/// Read by components that animate (`Spinner`, `Skeleton`). Defaults to
+/// `false` — call [`set_reduce_motion`] from your app if your user opts
+/// in, e.g. matching the OS-level "Reduce Motion" accessibility setting.
+pub fn reduce_motion(ctx: &egui::Context) -> bool {
+    ctx.data(|d| d.get_temp::<bool>(reduce_motion_id()))
+        .unwrap_or(false)
+}
+
+/// Toggle the reduce-motion flag for `ctx`. See [`reduce_motion`].
+pub fn set_reduce_motion(ctx: &egui::Context, on: bool) {
+    ctx.data_mut(|d| d.insert_temp(reduce_motion_id(), on));
 }

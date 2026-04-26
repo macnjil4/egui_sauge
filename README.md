@@ -1,5 +1,11 @@
 # egui_sauge
 
+[![CI](https://github.com/macnjil4/egui_sauge/actions/workflows/rust.yml/badge.svg)](https://github.com/macnjil4/egui_sauge/actions/workflows/rust.yml)
+[![crates.io](https://img.shields.io/crates/v/egui_sauge.svg)](https://crates.io/crates/egui_sauge)
+[![docs.rs](https://img.shields.io/docsrs/egui_sauge)](https://docs.rs/egui_sauge)
+[![License](https://img.shields.io/crates/l/egui_sauge.svg)](LICENSE)
+[![MSRV](https://img.shields.io/badge/MSRV-1.92-blue)](https://www.rust-lang.org)
+
 A fresh, natural design system for [egui](https://github.com/emilk/egui) — sage palette, warm neutrals, WCAG AA contrast, and a ready-to-use component library aimed at IT applications.
 
 ```rust
@@ -62,10 +68,10 @@ The crate is not yet on crates.io. Pick the option that fits your workflow:
 egui_sauge = { path = "../egui_sauge" }
 
 # Option 2 — git
-egui_sauge = { git = "https://github.com/<user>/egui_sauge", tag = "v1.0.0" }
+egui_sauge = { git = "https://github.com/macnjil4/egui_sauge", tag = "v1.1.0" }
 
 # Option 3 — crates.io (once published)
-egui_sauge = "1.0"
+egui_sauge = "1.1"
 
 # In all cases, your egui must match egui_sauge's pinned version:
 egui   = "0.34"

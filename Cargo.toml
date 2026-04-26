@@ -1,17 +1,22 @@
 [package]
 name = "egui_sauge"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2024"
 rust-version = "1.92"
 authors = ["egui_sauge contributors"]
 description = "A fresh, natural design system for egui — sage palette, warm neutrals, WCAG AA."
 repository = "https://github.com/macnjil4/egui_sauge"
 homepage = "https://github.com/macnjil4/egui_sauge"
+documentation = "https://docs.rs/egui_sauge"
 license = "Apache-2.0"
 readme = "README.md"
 keywords = ["egui", "design-system", "theme", "ui", "accessibility"]
 categories = ["gui", "visualization"]
-exclude = ["/assets/fonts/*.md", "/.github"]
+exclude = ["/assets/fonts/*.md", "/.github", "/.idea", "/.claude"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 egui = "0.34"
@@ -19,6 +24,18 @@ egui-phosphor = "0.12"
 
 [dev-dependencies]
 eframe = "0.34"
+
+[features]
+default = []
+# Enable extra Phosphor weight variants. Each turns on the corresponding
+# feature on `egui-phosphor`, exposing constants like
+# `egui_phosphor::bold::ROCKET`, plus the [`Variant::Bold`] enum value
+# you can pass to [`crate::install_phosphor_variant`] to register the
+# font on your `Context`. Use them through `Icon::Glyph(...)`.
+icons-bold = ["egui-phosphor/bold"]
+icons-fill = ["egui-phosphor/fill"]
+icons-light = ["egui-phosphor/light"]
+icons-thin = ["egui-phosphor/thin"]
 
 [lints.rust]
 missing_docs = "warn"

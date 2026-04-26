@@ -197,9 +197,15 @@ impl Widget for Skeleton {
         let (rect, response) =
             ui.allocate_exact_size(vec2(self.width, self.height), Sense::hover());
 
-        // Animated shimmer using a phase based on input time.
-        ui.ctx().request_repaint();
-        let t = ui.input(|i| i.time) as f32;
+        // Animated shimmer using a phase based on input time. Frozen at
+        // mid-amplitude when reduce-motion is on.
+        let reduced = crate::reduce_motion(ui.ctx());
+        let t = if reduced {
+            0.0_f32
+        } else {
+            ui.ctx().request_repaint();
+            ui.input(|i| i.time) as f32
+        };
         let phase = ((t * 1.2).sin() * 0.5 + 0.5) * 0.5 + 0.4; // 0.4..0.9
         let base = palette.bg_surface_alt;
         let alpha_strength = if palette.dark_mode { 0.06 } else { 0.04 };

@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-04-26
+
+Polish & infrastructure release. No breaking changes.
+
+### Added
+- `Density::Spacious` (1.25× scale, 40 px interact size) — touch-first /
+  accessibility large-target mode.
+- `Palette::custom(base, |p| { … })` — build a brand-customised palette
+  from `light()` or `dark()` without forking. WCAG AA is no longer
+  guaranteed once you override roles; verify yourself.
+- `Locale::De` (German) and `Locale::Es` (Spanish) translations.
+- `set_reduce_motion(ctx, bool)` / `reduce_motion(ctx)` — when true,
+  `Spinner` and `Skeleton` freeze their animations. Use to mirror the
+  OS-level "Reduce Motion" accessibility preference.
+- Cargo features `icons-bold`, `icons-fill`, `icons-light`, `icons-thin`
+  — turn on the matching `egui-phosphor` weight; consume via
+  `Icon::Glyph(egui_phosphor::bold::ROCKET)` after calling
+  `install_phosphor_variant(ctx, Variant::Bold)`.
+- `install_phosphor_variant(ctx, variant)` helper.
+- `[package.metadata.docs.rs]` so docs.rs builds with `--all-features`
+  and exposes the optional weight features as cfg flags.
+- `documentation = "https://docs.rs/egui_sauge"` in `Cargo.toml`.
+- README badges (CI, crates.io, docs.rs, license, MSRV).
+- `CONTRIBUTING.md` — PR workflow, commit conventions, component / locale
+  / icon addition recipes, release procedure.
+- CI matrix: Linux + macOS + Windows × stable + MSRV (1.92), plus a
+  separate `docs.rs build (strict)` job that fails on broken
+  intra-doc links.
+
+### Changed
+- `examples/showcase.rs` topbar exposes the three densities, four
+  locales, and the reduce-motion toggle.
+
 ## [1.0.0] — 2026-04-25
 
 First stable release. Public API frozen for the 1.x line. Breaking changes

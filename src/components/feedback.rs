@@ -44,9 +44,14 @@ impl Widget for Spinner {
 
         let (rect, response) = ui.allocate_exact_size(vec2(self.size, self.size), Sense::hover());
 
-        // Continuous repaint so the arc animates.
-        ui.ctx().request_repaint();
-        let t = ui.input(|i| i.time) as f32;
+        // Honor the reduce-motion flag — freeze the arc at a stable position.
+        let reduced = crate::reduce_motion(ui.ctx());
+        let t = if reduced {
+            0.0_f32
+        } else {
+            ui.ctx().request_repaint();
+            ui.input(|i| i.time) as f32
+        };
         let start = t * std::f32::consts::TAU;
         let radius = self.size * 0.42;
         let stroke_w = (self.size * 0.11).max(1.5);
