@@ -246,6 +246,58 @@ Pagination::new(&mut page, total, &mut page_size)
 ### Config diff / change preview
 - `DiffView` pour les configs YAML/JSON, les changements de feature flags, les resource specs avant déploiement. Header = chemin du fichier.
 
+### IDE / workbench layout (2.0)
+
+Pour une UI type RustRover / VS Code / IntelliJ, utiliser le tier "workbench" : `Workbench` orchestre les zones, `ActivityBar` les rails verticaux, `Splitter` les tool windows resizable, `TreeView` le file tree, `EditorTabs` les onglets de fichiers, `StatusBar` le footer.
+
+```rust
+use egui_sauge::components::{
+    Workbench, ActivityBar, ActivityItem, StatusBar, EditorTabs, EditorTab,
+    TreeView, TreeNode,
+};
+
+Workbench::begin(ui)
+    .top(|ui| { /* topbar : titre projet, run config, profil */ })
+    .status(|ui| {
+        StatusBar::show(
+            ui,
+            |ui| { StatusBar::segment(ui, Some(Icon::GitBranch), "main"); },
+            |_| {},
+            |ui| { StatusBar::segment(ui, None, "Ln 42, Col 8"); },
+        );
+    })
+    .left_activity(|ui| {
+        ActivityBar::new(&mut self.left_panel)
+            .item(ActivityItem::new(LeftPanel::Project, Icon::Folder).tooltip("Project · ⌘1"))
+            .item(ActivityItem::new(LeftPanel::Commit, Icon::GitCommit).badge(true))
+            .show(ui);
+    })
+    .left("Project", self.left_panel.is_some(), |ui| {
+        TreeView::new(&mut self.file_selected, "tree")
+            .node(TreeNode::folder(Folder, "src", vec![
+                TreeNode::leaf(Lib, "lib.rs"),
+            ]).open())
+            .show(ui);
+    })
+    .bottom("Terminal", self.terminal_open, |ui| { /* shell output */ })
+    .central(|ui| {
+        // Editor area: tabs + content
+        EditorTabs::new(&mut self.active_doc)
+            .tab(EditorTab::with_icon(DocId::Main, Icon::FileText, "main.rs").modified(true))
+            .show(ui);
+        // file body…
+    });
+```
+
+**Règles** :
+- `ActivityBar.item()` → top group (Project, Commit, Structure…). `bottom_item()` → bottom group avec séparateur (Settings, Account).
+- Cliquer sur l'item actif **ferme** le panel adjacent (`*selected = None`).
+- `EditorTabs` n'est PAS pour la nav de l'app — utilisez `Tabs` pour ça. Les `EditorTabs` représentent des **documents ouverts** (fichiers, requêtes…).
+- `Splitter` est implicite quand vous passez par `Workbench`. Pour un splitter standalone, `Splitter::new(id, SplitterSide::Left).title(...).show(ui, body)`.
+- `TreeView` persiste l'état d'expansion via `egui::Id` — passez un `id_salt` unique par arbre rendu sur la même frame.
+- `Density::Compact` est canonique pour les workbenches IDE (rangée plus courte, file tree dense).
+- L'ordre des slots dans `Workbench::begin` n'a pas d'importance pour la correction (chaque méthode appelle `egui::Panel` immédiatement) ; conventionnel : top → status → activity rails → tool windows → central.
+
 ### Liste de ressources (servers, secrets, deployments…)
 - Sidebar nav avec `NavItem`.
 - `PageHeader` avec breadcrumb + action `Button::primary("Add server").leading(Icon::Plus)`.

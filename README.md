@@ -40,6 +40,7 @@ fn main() -> eframe::Result<()> {
 
 | Group | Items |
 |---|---|
+| **Workbench (2.0)** | `Workbench` (IDE-style shell), `ActivityBar` (icon-only nav rail), `StatusBar` (3-slot footer + segments), `Splitter` (resizable panel), `TreeView<T>` (file tree), `EditorTabs<T>` (file tabs with modified dot + close ×) |
 | Buttons | `Button` (Primary / Secondary / Ghost / Danger × Sm / Md / Lg, leading & trailing icons), `IconButton` (with tooltip) |
 | Status & badges | `Badge`, `Tag` (closable), `StatusDot` (online / degraded / offline / idle, pulse), `Kbd`, `Avatar` / `AvatarGroup` (initials / icon / image, status dot) |
 | Feedback | `Spinner`, `ProgressBar`, `Alert`, `Toast` / `Toasts` (auto-dismiss stack) |
@@ -52,13 +53,13 @@ fn main() -> eframe::Result<()> {
 
 See `GUIDE.md` for the **UX/UI playbook** — page composition, when to use each navigation pattern, modal vs side panel, button order, typography hierarchy, accessibility checklist, IT-app patterns.
 
-## Live demo
+## Live demos
 
 ```bash
-cargo run --example showcase
+cargo run --example showcase    # every component, all densities + locales
+cargo run --example workbench   # IDE-style layout: activity rails, file
+                                # tree, editor tabs, terminal, status bar
 ```
-
-Every component, both color modes, both density presets, both locales, in one window.
 
 ## Adding to your project
 
@@ -69,10 +70,10 @@ The crate is not yet on crates.io. Pick the option that fits your workflow:
 egui_sauge = { path = "../egui_sauge" }
 
 # Option 2 — git
-egui_sauge = { git = "https://github.com/macnjil4/egui_sauge", tag = "v1.3.0" }
+egui_sauge = { git = "https://github.com/macnjil4/egui_sauge", tag = "v2.0.0" }
 
 # Option 3 — crates.io (once published)
-egui_sauge = "1.3"
+egui_sauge = "2.0"
 
 # In all cases, your egui must match egui_sauge's pinned version:
 egui   = "0.34"

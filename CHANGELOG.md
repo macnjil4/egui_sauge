@@ -2,6 +2,55 @@
 
 ## [Unreleased]
 
+## [2.0.0] — 2026-04-26
+
+Layout-shell release. **The major bump signals the new "workbench"
+tier of components, not breaking changes** — every public 1.x API is
+unchanged. You can upgrade by bumping the version pin only.
+
+### Added — workbench layout tier
+- `Workbench` — IDE-style top-level layout. Procedural builder
+  (`Workbench::begin(ui).top(...).left_activity(...).left(...).bottom(...).status(...).central(...)`)
+  that orchestrates `egui::Panel` calls in the right order without
+  locking `&mut self` for the whole frame. Each slot renders
+  immediately so closures don't have lifetime conflicts.
+- `ActivityBar` / `ActivityItem` — vertical icon-only nav strip
+  (left or right rail). Selected/unselected toggling, badge dot, top
+  group + bottom group with separator, themed tooltips.
+- `StatusBar` — bottom three-slot strip (left / center / right) with
+  a `StatusBar::segment(ui, icon, text)` helper for IDE-style status
+  segments (branch, build status, line:col, encoding, language).
+- `Splitter` — themed wrapper around resizable `egui::Panel::{left,
+  right, bottom}`. Optional title strip with right-aligned action
+  slot (collapse, settings cog).
+- `TreeView<T>` / `TreeNode<T>` — recursive expand/collapse list with
+  per-node icons (auto: folder/folder-open/file). Persisted expansion
+  state via egui memory; typed selection.
+- `EditorTabs<T>` / `EditorTab<T>` / `EditorTabAction<T>` — file-style
+  tab bar with icon + label + modified-content dot + per-tab close ×,
+  pinned tabs, horizontal scroll on overflow. `show(ui)` returns
+  `Option<EditorTabAction>` so the caller can react to selection /
+  closure events.
+
+### Added — examples
+- `examples/workbench.rs` — full IDE-style demo: topbar with run
+  config, two activity rails (Project / Commit / Structure /
+  Services / Problems on the left; Cargo / Build / AI on the right),
+  resizable file tree, editor tabs across README / spec / CHANGELOG /
+  Cargo.toml, central editor area, bottom terminal panel, three-slot
+  status bar with branch / Cargo Check / Ln:Col / encoding.
+
+### Notes on the major bump
+The Rust ecosystem treats `0.x` and `1.x` differently from `2.x` only
+because of breaking changes. We're using the major bump here as a
+**capability signal** — egui_sauge 2.0 is "good enough to build a real
+IDE-style app", versus 1.x which was a component library. Choosing 2.0
+also reserves room for the API-unification breaking changes outlined
+in the v1.0 evolution plan (standardise `.show()` returns, `Theme`
+builder superseding `apply_theme*` + `set_locale` + `set_reduce_motion`)
+without bumping major again later. Those will land in 2.1+ as
+non-breaking deprecations followed by removal in 3.0.
+
 ## [1.3.0] — 2026-04-26
 
 Closes the original v1.2 component plan. No breaking changes.

@@ -53,7 +53,7 @@
 //!
 //! [egui]: https://github.com/emilk/egui
 
-#![doc(html_root_url = "https://docs.rs/egui_sauge/1.3.0")]
+#![doc(html_root_url = "https://docs.rs/egui_sauge/2.0.0")]
 // Pedantic lints we deliberately silence:
 // - `must_use_candidate` / `return_self_not_must_use`: every builder here is
 //   chain-style; #[must_use] would be noise on ~180 setters.
