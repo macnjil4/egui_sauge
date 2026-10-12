@@ -48,7 +48,7 @@ impl StatusBar {
                 egui::pos2(rect.left(), rect.top()),
                 egui::pos2(rect.right(), rect.top()),
             ],
-            Stroke::new(1.0, palette.border_subtle),
+            Stroke::new(1.0_f32, palette.border_subtle),
         );
 
         // Three columns: 1/3 each (caller can adjust by laying out

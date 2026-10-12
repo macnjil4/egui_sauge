@@ -79,7 +79,7 @@ impl<'a, 'b> Widget for Alert<'a, 'b> {
 
         egui::Frame::default()
             .fill(fill)
-            .stroke(Stroke::new(1.0, border))
+            .stroke(Stroke::new(1.0_f32, border))
             .corner_radius(corner(RADIUS.md))
             .inner_margin(egui::Margin::same(SPACING.s3 as i8))
             .show(ui, |ui| {

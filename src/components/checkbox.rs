@@ -117,7 +117,7 @@ impl<'a> Widget for Checkbox<'a> {
             box_rect,
             corner(RADIUS.sm),
             fill,
-            Stroke::new(1.5, stroke_color),
+            Stroke::new(1.5_f32, stroke_color),
             StrokeKind::Inside,
         );
 
@@ -139,7 +139,7 @@ impl<'a> Widget for Checkbox<'a> {
             ui.painter().rect_stroke(
                 box_rect.expand(2.0),
                 corner(RADIUS.sm + 2.0),
-                Stroke::new(2.0, palette.focus_ring),
+                Stroke::new(2.0_f32, palette.focus_ring),
                 StrokeKind::Outside,
             );
         }

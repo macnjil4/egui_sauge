@@ -68,7 +68,7 @@ impl<'a> Widget for Switch<'a> {
             rect,
             corner(RADIUS.full),
             track_fill,
-            Stroke::new(1.0, track_stroke),
+            Stroke::new(1.0_f32, track_stroke),
             StrokeKind::Inside,
         );
 
@@ -89,7 +89,7 @@ impl<'a> Widget for Switch<'a> {
         ui.painter().circle_stroke(
             knob_c,
             knob_r,
-            Stroke::new(1.0, alpha(palette.border_default, 0.6)),
+            Stroke::new(1.0_f32, alpha(palette.border_default, 0.6)),
         );
 
         if response.has_focus() {
@@ -97,7 +97,7 @@ impl<'a> Widget for Switch<'a> {
             ui.painter().rect_stroke(
                 ring,
                 corner(RADIUS.full),
-                Stroke::new(2.0, palette.focus_ring),
+                Stroke::new(2.0_f32, palette.focus_ring),
                 StrokeKind::Outside,
             );
         }

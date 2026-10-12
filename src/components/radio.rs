@@ -218,7 +218,7 @@ fn paint_option<T: PartialEq + Clone>(
         stroke_color
     };
     ui.painter()
-        .circle_stroke(center, dot_size / 2.0, Stroke::new(1.5, stroke_color));
+        .circle_stroke(center, dot_size / 2.0, Stroke::new(1.5_f32, stroke_color));
     if is_selected {
         let inner = if error {
             palette.error
@@ -238,7 +238,7 @@ fn paint_option<T: PartialEq + Clone>(
         ui.painter().rect_stroke(
             egui::Rect::from_center_size(center, egui::Vec2::splat(dot_size + 4.0)),
             corner(RADIUS.full),
-            Stroke::new(2.0, palette.focus_ring),
+            Stroke::new(2.0_f32, palette.focus_ring),
             StrokeKind::Outside,
         );
     }

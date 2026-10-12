@@ -223,7 +223,7 @@ fn paint_bar(ui: &mut Ui, g: &Gauge<'_>, p: &crate::Palette, fill: Color32) -> R
         track,
         corner(RADIUS.full),
         p.bg_surface_alt,
-        Stroke::new(1.0, p.border_subtle),
+        Stroke::new(1.0_f32, p.border_subtle),
         StrokeKind::Inside,
     );
     let fill_w = width * g.value;

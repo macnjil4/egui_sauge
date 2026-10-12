@@ -69,7 +69,7 @@ impl<'a> PageHeader<'a> {
                 egui::pos2(ui.min_rect().left(), y),
                 egui::pos2(ui.min_rect().right(), y),
             ],
-            Stroke::new(1.0, palette.border_subtle),
+            Stroke::new(1.0_f32, palette.border_subtle),
         );
         ui.add_space(SPACING.s3);
 

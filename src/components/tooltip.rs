@@ -14,7 +14,7 @@ pub fn tooltip(response: &Response, text: &str) -> Response {
         let palette = palette_of(ui.ctx());
         egui::Frame::default()
             .fill(palette.bg_surface)
-            .stroke(Stroke::new(1.0, palette.border_default))
+            .stroke(Stroke::new(1.0_f32, palette.border_default))
             .corner_radius(corner(RADIUS.md))
             .inner_margin(egui::Margin::symmetric(
                 SPACING.s3 as i8,

@@ -130,7 +130,7 @@ impl<'a, T: Clone + PartialEq> EditorTabs<'a, T> {
                     egui::pos2(r.left(), r.bottom() - 0.5),
                     egui::pos2(r.right(), r.bottom() - 0.5),
                 ],
-                Stroke::new(1.0, palette.border_default),
+                Stroke::new(1.0_f32, palette.border_default),
             );
         });
         action
@@ -179,7 +179,7 @@ fn paint_tab<T: Clone + PartialEq>(
             egui::pos2(rect.right() - 0.5, rect.top() + 6.0),
             egui::pos2(rect.right() - 0.5, rect.bottom() - 6.0),
         ],
-        Stroke::new(1.0, palette.border_subtle),
+        Stroke::new(1.0_f32, palette.border_subtle),
     );
 
     let mut x = rect.left() + pad;

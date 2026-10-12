@@ -119,7 +119,7 @@ impl<'a> InputField<'a> {
                     outer,
                     corner(RADIUS.md),
                     palette.bg_surface,
-                    Stroke::new(1.0, border_color),
+                    Stroke::new(1.0_f32, border_color),
                     StrokeKind::Inside,
                 );
 
@@ -169,7 +169,7 @@ impl<'a> InputField<'a> {
                     ui.painter().rect_stroke(
                         ring,
                         corner(RADIUS.md),
-                        Stroke::new(2.0, palette.focus_ring),
+                        Stroke::new(2.0_f32, palette.focus_ring),
                         StrokeKind::Outside,
                     );
                 }

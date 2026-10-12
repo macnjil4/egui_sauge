@@ -171,8 +171,8 @@ impl<'a> Widget for Button<'a> {
 
         let (fill, stroke_color) = colors(&palette, self.variant, &response, self.disabled);
         let stroke = match self.variant {
-            ButtonVariant::Secondary => Stroke::new(1.0, stroke_color),
-            ButtonVariant::Ghost if response.hovered() => Stroke::new(1.0, stroke_color),
+            ButtonVariant::Secondary => Stroke::new(1.0_f32, stroke_color),
+            ButtonVariant::Ghost if response.hovered() => Stroke::new(1.0_f32, stroke_color),
             _ => Stroke::NONE,
         };
 
@@ -185,7 +185,7 @@ impl<'a> Widget for Button<'a> {
             ui.painter().rect_stroke(
                 ring,
                 corner(RADIUS.md + 2.0),
-                Stroke::new(2.0, palette.focus_ring),
+                Stroke::new(2.0_f32, palette.focus_ring),
                 StrokeKind::Outside,
             );
         }
@@ -283,8 +283,8 @@ impl Widget for IconButton {
 
         let (fill, stroke_color) = colors(&palette, self.variant, &response, self.disabled);
         let stroke = match self.variant {
-            ButtonVariant::Secondary => Stroke::new(1.0, stroke_color),
-            ButtonVariant::Ghost if response.hovered() => Stroke::new(1.0, stroke_color),
+            ButtonVariant::Secondary => Stroke::new(1.0_f32, stroke_color),
+            ButtonVariant::Ghost if response.hovered() => Stroke::new(1.0_f32, stroke_color),
             _ => Stroke::NONE,
         };
         ui.painter()
@@ -295,7 +295,7 @@ impl Widget for IconButton {
             ui.painter().rect_stroke(
                 ring,
                 corner(RADIUS.md + 2.0),
-                Stroke::new(2.0, palette.focus_ring),
+                Stroke::new(2.0_f32, palette.focus_ring),
                 StrokeKind::Outside,
             );
         }

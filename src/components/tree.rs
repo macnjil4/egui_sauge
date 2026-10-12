@@ -215,7 +215,7 @@ fn paint_node<T: Clone + PartialEq>(
         ui.painter().rect_stroke(
             rect.expand(1.0),
             corner(RADIUS.sm),
-            Stroke::new(2.0, palette.focus_ring),
+            Stroke::new(2.0_f32, palette.focus_ring),
             StrokeKind::Outside,
         );
     }

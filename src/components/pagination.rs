@@ -126,7 +126,7 @@ fn paint_arrow(ui: &mut Ui, icon: Icon, disabled: bool) -> Response {
         rect,
         corner(RADIUS.sm),
         bg,
-        Stroke::new(1.0, palette.border_default),
+        Stroke::new(1.0_f32, palette.border_default),
         StrokeKind::Inside,
     );
     let color = if disabled {

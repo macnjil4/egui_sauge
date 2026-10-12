@@ -83,7 +83,7 @@ impl<'a> Dialog<'a> {
             .frame(
                 egui::Frame::default()
                     .fill(palette.bg_surface)
-                    .stroke(Stroke::new(1.0, palette.border_default))
+                    .stroke(Stroke::new(1.0_f32, palette.border_default))
                     .corner_radius(corner(RADIUS.lg))
                     .inner_margin(egui::Margin::same(SPACING.s4 as i8))
                     .shadow(Elevation::Modal.shadow(palette.dark_mode)),
@@ -126,7 +126,7 @@ impl<'a> Dialog<'a> {
                         egui::pos2(ui.min_rect().left(), sep_y),
                         egui::pos2(ui.min_rect().right(), sep_y),
                     ],
-                    Stroke::new(1.0, palette.border_subtle),
+                    Stroke::new(1.0_f32, palette.border_subtle),
                 );
                 ui.add_space(SPACING.s3);
 

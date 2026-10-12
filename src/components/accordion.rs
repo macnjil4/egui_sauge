@@ -59,7 +59,7 @@ impl<'a> Accordion<'a> {
         let palette = palette_of(ui.ctx());
         let frame = egui::Frame::default()
             .fill(palette.bg_surface)
-            .stroke(Stroke::new(1.0, palette.border_subtle))
+            .stroke(Stroke::new(1.0_f32, palette.border_subtle))
             .corner_radius(corner(RADIUS.md))
             .inner_margin(egui::Margin::symmetric(SPACING.s3 as i8, SPACING.s2 as i8));
         // We can't easily pierce CollapsingHeader's icon, so we just style

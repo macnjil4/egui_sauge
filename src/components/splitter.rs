@@ -78,7 +78,7 @@ impl<'a> Splitter<'a> {
         let palette = palette_of(ui.ctx());
         let frame = egui::Frame::default()
             .fill(palette.bg_surface_alt)
-            .stroke(Stroke::new(1.0, palette.border_subtle))
+            .stroke(Stroke::new(1.0_f32, palette.border_subtle))
             .inner_margin(egui::Margin::ZERO);
 
         let title = self.title;
@@ -147,7 +147,7 @@ fn paint_title(
             egui::pos2(ui.min_rect().left(), ui.cursor().top()),
             egui::pos2(ui.min_rect().right(), ui.cursor().top()),
         ],
-        Stroke::new(1.0, palette.border_subtle),
+        Stroke::new(1.0_f32, palette.border_subtle),
     );
     let _ = RADIUS;
 }

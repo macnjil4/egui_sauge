@@ -77,7 +77,7 @@ impl<'a> CodeBlock<'a> {
         let palette = palette_of(ui.ctx());
         egui::Frame::default()
             .fill(palette.bg_surface_alt)
-            .stroke(Stroke::new(1.0, palette.border_subtle))
+            .stroke(Stroke::new(1.0_f32, palette.border_subtle))
             .corner_radius(corner(RADIUS.md))
             .inner_margin(egui::Margin::same(0))
             .show(ui, |ui| {
@@ -99,7 +99,7 @@ impl<'a> CodeBlock<'a> {
                             egui::pos2(header_rect.left(), header_rect.bottom()),
                             egui::pos2(header_rect.right(), header_rect.bottom()),
                         ],
-                        Stroke::new(1.0, palette.border_subtle),
+                        Stroke::new(1.0_f32, palette.border_subtle),
                     );
                 }
                 let inner = |ui: &mut Ui| {

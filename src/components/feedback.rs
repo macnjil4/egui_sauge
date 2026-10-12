@@ -149,7 +149,7 @@ impl<'a> Widget for ProgressBar<'a> {
                 rect,
                 corner(RADIUS.full),
                 palette.bg_surface_alt,
-                Stroke::new(1.0, palette.border_subtle),
+                Stroke::new(1.0_f32, palette.border_subtle),
                 StrokeKind::Inside,
             );
             let fill_w = rect.width() * self.value;

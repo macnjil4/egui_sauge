@@ -49,7 +49,7 @@ impl<'a> Card<'a> {
         let palette = palette_of(ui.ctx());
         let frame = egui::Frame::default()
             .fill(palette.bg_surface)
-            .stroke(Stroke::new(1.0, palette.border_subtle))
+            .stroke(Stroke::new(1.0_f32, palette.border_subtle))
             .corner_radius(corner(RADIUS.md))
             .inner_margin(egui::Margin::same(SPACING.s4 as i8))
             .shadow(self.elevation.shadow(palette.dark_mode));

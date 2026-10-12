@@ -142,7 +142,7 @@ impl<'a> Widget for Sparkline<'a> {
                     ));
                 }
                 ui.painter()
-                    .add(egui::Shape::line(pts.clone(), Stroke::new(1.5, color)));
+                    .add(egui::Shape::line(pts.clone(), Stroke::new(1.5_f32, color)));
                 if self.show_last
                     && let Some(last) = pts.last()
                 {

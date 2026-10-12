@@ -147,7 +147,7 @@ impl<'a> Widget for NavItem<'a> {
             ui.painter().rect_stroke(
                 rect.expand(2.0),
                 corner(RADIUS.md),
-                Stroke::new(2.0, palette.focus_ring),
+                Stroke::new(2.0_f32, palette.focus_ring),
                 StrokeKind::Outside,
             );
         }
@@ -256,7 +256,7 @@ impl<'a, T: Clone + PartialEq> Tabs<'a, T> {
                 egui::pos2(r.left(), r.bottom() - 1.0),
                 egui::pos2(r.right(), r.bottom() - 1.0),
             ],
-            Stroke::new(1.0, palette.border_subtle),
+            Stroke::new(1.0_f32, palette.border_subtle),
         );
 
         changed

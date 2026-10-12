@@ -36,7 +36,7 @@ fn apply_visuals(style: &mut Style, p: &Palette) {
     v.panel_fill = p.bg_app;
     v.extreme_bg_color = p.bg_surface;
     v.faint_bg_color = p.bg_hover;
-    v.window_stroke = Stroke::new(1.0, p.border_default);
+    v.window_stroke = Stroke::new(1.0_f32, p.border_default);
     v.window_corner_radius = corner(RADIUS.lg);
 
     // Shadows — egui windows get Modal-level depth, popups/menus get Popover.
@@ -49,41 +49,41 @@ fn apply_visuals(style: &mut Style, p: &Palette) {
     // Non-interactive widgets (labels, separators)
     v.widgets.noninteractive.bg_fill = p.bg_surface;
     v.widgets.noninteractive.weak_bg_fill = p.bg_surface;
-    v.widgets.noninteractive.bg_stroke = Stroke::new(1.0, p.border_subtle);
-    v.widgets.noninteractive.fg_stroke = Stroke::new(1.0, p.text_secondary);
+    v.widgets.noninteractive.bg_stroke = Stroke::new(1.0_f32, p.border_subtle);
+    v.widgets.noninteractive.fg_stroke = Stroke::new(1.0_f32, p.text_secondary);
     v.widgets.noninteractive.corner_radius = r_md;
 
     // Inactive (rest) interactive widgets
     v.widgets.inactive.bg_fill = p.bg_surface;
     v.widgets.inactive.weak_bg_fill = p.bg_surface;
-    v.widgets.inactive.bg_stroke = Stroke::new(1.0, p.border_default);
-    v.widgets.inactive.fg_stroke = Stroke::new(1.0, p.text_primary);
+    v.widgets.inactive.bg_stroke = Stroke::new(1.0_f32, p.border_default);
+    v.widgets.inactive.fg_stroke = Stroke::new(1.0_f32, p.text_primary);
     v.widgets.inactive.corner_radius = r_md;
 
     // Hovered
     v.widgets.hovered.bg_fill = p.bg_hover;
     v.widgets.hovered.weak_bg_fill = p.bg_hover;
-    v.widgets.hovered.bg_stroke = Stroke::new(1.0, p.brand_default);
-    v.widgets.hovered.fg_stroke = Stroke::new(1.0, p.text_primary);
+    v.widgets.hovered.bg_stroke = Stroke::new(1.0_f32, p.brand_default);
+    v.widgets.hovered.fg_stroke = Stroke::new(1.0_f32, p.text_primary);
     v.widgets.hovered.corner_radius = r_md;
 
     // Active (pressed)
     v.widgets.active.bg_fill = p.bg_pressed;
     v.widgets.active.weak_bg_fill = p.bg_pressed;
-    v.widgets.active.bg_stroke = Stroke::new(1.5, p.brand_hover);
-    v.widgets.active.fg_stroke = Stroke::new(1.0, p.text_primary);
+    v.widgets.active.bg_stroke = Stroke::new(1.5_f32, p.brand_hover);
+    v.widgets.active.fg_stroke = Stroke::new(1.0_f32, p.text_primary);
     v.widgets.active.corner_radius = r_md;
 
     // Open (e.g. open combobox)
     v.widgets.open.bg_fill = p.bg_surface_alt;
     v.widgets.open.weak_bg_fill = p.bg_surface_alt;
-    v.widgets.open.bg_stroke = Stroke::new(1.0, p.brand_default);
-    v.widgets.open.fg_stroke = Stroke::new(1.0, p.text_primary);
+    v.widgets.open.bg_stroke = Stroke::new(1.0_f32, p.brand_default);
+    v.widgets.open.fg_stroke = Stroke::new(1.0_f32, p.text_primary);
     v.widgets.open.corner_radius = r_md;
 
     // Selection + focus
     v.selection.bg_fill = multiply_alpha(p.brand_default, 0.25);
-    v.selection.stroke = Stroke::new(2.0, p.focus_ring);
+    v.selection.stroke = Stroke::new(2.0_f32, p.focus_ring);
 
     // Hyperlink
     v.hyperlink_color = p.brand_hover;

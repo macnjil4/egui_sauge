@@ -293,7 +293,7 @@ impl<'a> Widget for Kbd<'a> {
             rect,
             corner(RADIUS.sm),
             palette.bg_surface_alt,
-            Stroke::new(1.0, palette.border_default),
+            Stroke::new(1.0_f32, palette.border_default),
             StrokeKind::Inside,
         );
         let text_pos = egui::pos2(rect.left() + pad.x, rect.center().y - galley.size().y / 2.0);

@@ -109,7 +109,7 @@ impl<'a> Timeline<'a> {
                                     egui::pos2(center.x, center.y + marker_size / 2.0),
                                     egui::pos2(center.x, marker_rect.bottom() + 80.0),
                                 ],
-                                Stroke::new(1.5, palette.border_default),
+                                Stroke::new(1.5_f32, palette.border_default),
                             );
                         }
                         // Marker disc.

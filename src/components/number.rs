@@ -126,7 +126,7 @@ impl<'a> NumberField<'a> {
                     outer,
                     corner(RADIUS.md),
                     palette.bg_surface,
-                    Stroke::new(1.0, border_color),
+                    Stroke::new(1.0_f32, border_color),
                     StrokeKind::Inside,
                 );
 
@@ -168,7 +168,7 @@ impl<'a> NumberField<'a> {
                         egui::pos2(outer.right() - stepper_w, outer.top() + 4.0),
                         egui::pos2(outer.right() - stepper_w, outer.bottom() - 4.0),
                     ],
-                    Stroke::new(1.0, palette.border_subtle),
+                    Stroke::new(1.0_f32, palette.border_subtle),
                 );
 
                 // Suffix.
@@ -215,7 +215,7 @@ impl<'a> NumberField<'a> {
                     ui.painter().rect_stroke(
                         outer.expand(1.0),
                         corner(RADIUS.md),
-                        Stroke::new(2.0, palette.focus_ring),
+                        Stroke::new(2.0_f32, palette.focus_ring),
                         StrokeKind::Outside,
                     );
                 }

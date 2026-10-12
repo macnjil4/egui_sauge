@@ -167,7 +167,7 @@ impl<'a> Widget for Avatar<'a> {
                 ui.painter().circle_stroke(
                     center,
                     radius,
-                    Stroke::new(1.0, alpha(palette.text_primary, 0.04)),
+                    Stroke::new(1.0_f32, alpha(palette.text_primary, 0.04)),
                 );
             }
         }
@@ -176,7 +176,7 @@ impl<'a> Widget for Avatar<'a> {
         ui.painter().circle_stroke(
             center,
             radius,
-            Stroke::new(1.0, alpha(palette.text_primary, 0.08)),
+            Stroke::new(1.0_f32, alpha(palette.text_primary, 0.08)),
         );
 
         // Status dot.
@@ -268,7 +268,7 @@ impl<'a> AvatarGroup<'a> {
             ui.painter()
                 .circle_filled(center, d / 2.0, palette.bg_surface_alt);
             ui.painter()
-                .circle_stroke(center, d / 2.0, Stroke::new(1.0, palette.border_default));
+                .circle_stroke(center, d / 2.0, Stroke::new(1.0_f32, palette.border_default));
             ui.painter().text(
                 center,
                 egui::Align2::CENTER_CENTER,

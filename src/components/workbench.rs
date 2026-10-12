@@ -46,7 +46,7 @@ impl<'ui> Workbench<'ui> {
             .frame(
                 egui::Frame::default()
                     .fill(palette.bg_surface_alt)
-                    .stroke(egui::Stroke::new(1.0, palette.border_subtle))
+                    .stroke(egui::Stroke::new(1.0_f32, palette.border_subtle))
                     .inner_margin(egui::Margin::symmetric(
                         SPACING.s2 as i8,
                         (SPACING.s2 - 1.0) as i8,
@@ -79,7 +79,7 @@ impl<'ui> Workbench<'ui> {
             .frame(
                 egui::Frame::default()
                     .fill(palette.bg_surface_alt)
-                    .stroke(egui::Stroke::new(1.0, palette.border_subtle))
+                    .stroke(egui::Stroke::new(1.0_f32, palette.border_subtle))
                     .inner_margin(egui::Margin::ZERO),
             )
             .show_inside(self.ui, body);
@@ -96,7 +96,7 @@ impl<'ui> Workbench<'ui> {
             .frame(
                 egui::Frame::default()
                     .fill(palette.bg_surface_alt)
-                    .stroke(egui::Stroke::new(1.0, palette.border_subtle))
+                    .stroke(egui::Stroke::new(1.0_f32, palette.border_subtle))
                     .inner_margin(egui::Margin::ZERO),
             )
             .show_inside(self.ui, body);

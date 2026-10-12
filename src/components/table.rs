@@ -275,7 +275,7 @@ impl<'a, T> Table<'a, T> {
                         egui::pos2(header_rect.left(), header_rect.bottom()),
                         egui::pos2(header_rect.right(), header_rect.bottom()),
                     ],
-                    Stroke::new(1.0, palette.border_default),
+                    Stroke::new(1.0_f32, palette.border_default),
                 );
 
                 // Hold the selection mutable borrow at most for one row at a time.
@@ -331,7 +331,7 @@ impl<'a, T> Table<'a, T> {
                                     box_rect,
                                     corner(RADIUS.sm),
                                     fill,
-                                    Stroke::new(1.5, stroke_color),
+                                    Stroke::new(1.5_f32, stroke_color),
                                     StrokeKind::Inside,
                                 );
                                 if on {

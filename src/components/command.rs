@@ -190,7 +190,7 @@ impl<'a> CommandPalette<'a> {
 
         let frame = egui::Frame::default()
             .fill(palette.bg_surface)
-            .stroke(Stroke::new(1.0, palette.border_default))
+            .stroke(Stroke::new(1.0_f32, palette.border_default))
             .corner_radius(corner(RADIUS.lg))
             .inner_margin(egui::Margin::same(0))
             .shadow(Elevation::Modal.shadow(palette.dark_mode));
@@ -243,7 +243,7 @@ impl<'a> CommandPalette<'a> {
                         egui::pos2(search_rect.left(), search_rect.bottom()),
                         egui::pos2(search_rect.right(), search_rect.bottom()),
                     ],
-                    Stroke::new(1.0, palette.border_subtle),
+                    Stroke::new(1.0_f32, palette.border_subtle),
                 );
 
                 // Results.
@@ -303,7 +303,7 @@ impl<'a> CommandPalette<'a> {
                             r,
                             corner(RADIUS.sm),
                             palette.bg_surface_alt,
-                            Stroke::new(1.0, palette.border_subtle),
+                            Stroke::new(1.0_f32, palette.border_subtle),
                             StrokeKind::Inside,
                         );
                         ui.painter().galley(

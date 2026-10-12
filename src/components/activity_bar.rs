@@ -124,7 +124,7 @@ impl<'a, T: PartialEq + Clone> ActivityBar<'a, T> {
                             egui::pos2(ui.min_rect().left() + 8.0, y),
                             egui::pos2(ui.min_rect().right() - 8.0, y),
                         ],
-                        Stroke::new(1.0, palette.border_subtle),
+                        Stroke::new(1.0_f32, palette.border_subtle),
                     );
                 });
             }
@@ -201,7 +201,7 @@ fn paint_item<T: PartialEq + Clone>(
         ui.painter().rect_stroke(
             rect.expand(1.0),
             corner(RADIUS.sm),
-            Stroke::new(2.0, palette.focus_ring),
+            Stroke::new(2.0_f32, palette.focus_ring),
             StrokeKind::Outside,
         );
     }
